@@ -218,7 +218,77 @@ const SOUNDS = {
     }
     return reverb(L, 0.4, 1.6);
   },
+  // trilha lo-fi (80 BPM): piano elétrico em acordes de 7ª, baixo, bateria com swing e chiado de vinil
+  lofi(len = 68) {
+    const r = rng(31), L = new Float32Array(len * SR), beat = 0.75, bar = beat * 4;
+    const mid = f => 440 * Math.pow(2, (f - 69) / 12);
+    const chords = [[53, 57, 60, 64], [52, 55, 59, 62], [50, 53, 57, 60], [48, 52, 55, 59]]; // Fmaj7 Em7 Dm7 Cmaj7
+    const roots = [41, 40, 38, 36];
+    const note = (t0, f, dur, amp) => { const s0 = Math.floor(t0 * SR), n = Math.floor(dur * SR); for (let i = 0; i < n && s0 + i < L.length; i++) { const t = i / SR, e = Math.min(1, t / 0.008) * Math.exp(-t * 1.6); L[s0 + i] += (Math.sin(TAU * f * t) + 0.35 * Math.sin(TAU * f * 2 * t) * Math.exp(-t * 4) + 0.12 * Math.sin(TAU * f * 3 * t) * Math.exp(-t * 7)) * e * amp * (0.85 + 0.15 * Math.sin(TAU * 5 * t)); } };
+    const kick = t0 => { const s0 = Math.floor(t0 * SR); let ph = 0; for (let i = 0; i < SR * 0.3 && s0 + i < L.length; i++) { const t = i / SR; ph += TAU * (45 + 70 * Math.exp(-t * 30)) / SR; L[s0 + i] += Math.sin(ph) * Math.exp(-t * 9) * 0.55; } };
+    const bp = biquad('bp', 1900, 1.2), hp = biquad('hp', 7000, 0.7);
+    const snare = t0 => { const s0 = Math.floor(t0 * SR); for (let i = 0; i < SR * 0.25 && s0 + i < L.length; i++) { const t = i / SR; L[s0 + i] += (bp(r() * 2 - 1) * 0.9 + Math.sin(TAU * 185 * t) * 0.3) * Math.exp(-t * 18) * 0.35; } };
+    const hat = (t0, a) => { const s0 = Math.floor(t0 * SR); for (let i = 0; i < SR * 0.05 && s0 + i < L.length; i++) { const t = i / SR; L[s0 + i] += hp(r() * 2 - 1) * Math.exp(-t * 70) * a; } };
+    for (let b = 0; b * bar < len; b++) {
+      const t0 = b * bar, ch = chords[b % 4], drums = t0 >= bar * 1 && t0 < len - bar;
+      ch.forEach((m, k) => { note(t0 + k * 0.012, mid(m), 2.6, 0.07); note(t0 + beat * 2.5 + k * 0.01, mid(m + 12 * (k === 3 ? 1 : 0)), 1.2, 0.04); });
+      note(t0, mid(roots[b % 4] - 12), 1.4, 0.22); note(t0 + beat * 2, mid(roots[b % 4] - 12), 1.2, 0.16);
+      if (drums) { kick(t0); kick(t0 + beat * 2.5); snare(t0 + beat); snare(t0 + beat * 3); for (let h = 0; h < 8; h++) hat(t0 + h * beat / 2 + (h % 2 ? 0.09 : 0), h % 2 ? 0.06 : 0.1); }
+    }
+    const lp = biquad('lp', 3200, 0.7), lp2 = biquad('lp', 1800, 0.5);
+    for (let n = 0; n < L.length; n++) {
+      const t = n / SR; const crackle = r() < 0.0006 ? (r() * 2 - 1) * 0.5 : 0;
+      L[n] = lp(L[n]) + lp2(r() * 2 - 1) * 0.012 + crackle;
+      L[n] *= env(t, 2.5, 3, len);
+    }
+    return L;
+  },
+  // passarinhos ao entardecer
+  passaros(len = 40) {
+    const r = rng(37), L = new Float32Array(len * SR);
+    for (let k = 0; k < 70; k++) {
+      const t0 = r() * (len - 1), f0 = 2600 + r() * 2400, nCh = 2 + Math.floor(r() * 4), amp = 0.08 + r() * 0.12;
+      for (let c = 0; c < nCh; c++) { const s0 = Math.floor((t0 + c * 0.11) * SR); let ph = 0; for (let i = 0; i < SR * 0.08 && s0 + i < L.length; i++) { const t = i / SR; ph += TAU * (f0 + 1500 * Math.sin(TAU * 25 * t)) / SR; L[s0 + i] += Math.sin(ph) * Math.sin(Math.PI * t / 0.08) * amp; } }
+    }
+    for (let n = 0; n < L.length; n++) L[n] *= env(n / SR, 1.5, 6, len);
+    return reverb(L, 0.25);
+  },
+  // fogueira estalando
+  fogueira(len = 34) {
+    const r = rng(41), L = new Float32Array(len * SR), lp = biquad('lp', 500);
+    for (let n = 0; n < L.length; n++) { const t = n / SR; L[n] = lp(r() * 2 - 1) * 0.5 * (0.7 + 0.3 * Math.sin(t * 1.3)) + (r() < 0.0012 ? (r() * 2 - 1) * 0.9 : 0); L[n] *= env(t, 2, 3, len); }
+    return L;
+  },
+  // martelo na bigorna: uma batida por segundo, em t inteiro (sincronizada com a animação "martelar")
+  martelo(len = 6) {
+    const L = new Float32Array(len * SR), parts = [880, 1320, 2210, 3170, 4400];
+    for (let k = 0; k < len; k++) { const s0 = k * SR; for (let i = 0; i < SR * 0.7 && s0 + i < L.length; i++) { const t = i / SR; let v = 0; parts.forEach((f, j) => { v += Math.sin(TAU * f * t) * Math.exp(-t * (7 + j * 4)) / (1 + j * 0.5); }); L[s0 + i] += v * 0.45; } }
+    return reverb(L, 0.25);
+  },
+  // violão dedilhado (Karplus-Strong), acordes C - G - Am - F
+  violao(len = 14) {
+    const r = rng(43), L = new Float32Array(len * SR), mid = m => 440 * Math.pow(2, (m - 69) / 12);
+    const chords = [[48, 55, 60, 64, 67], [43, 50, 55, 59, 62], [45, 52, 57, 60, 64], [41, 48, 53, 57, 60]];
+    const pluck = (t0, f, amp) => { const N = Math.round(SR / f), buf = new Float32Array(N); for (let i = 0; i < N; i++) buf[i] = r() * 2 - 1; const s0 = Math.floor(t0 * SR); let idx = 0; for (let i = 0; i < SR * 2.2 && s0 + i < L.length; i++) { const a = buf[idx], b = buf[(idx + 1) % N]; buf[idx] = (a + b) * 0.4985; L[s0 + i] += a * amp; idx = (idx + 1) % N; } };
+    for (let b = 0; b * 1.6 < len - 1; b++) { const ch = chords[b % 4]; const t0 = b * 1.6; [0, 2, 3, 4, 1, 3].forEach((k, i) => pluck(t0 + i * 0.26, mid(ch[k]), 0.22)); }
+    for (let n = 0; n < L.length; n++) L[n] *= env(n / SR, 0.05, 2, len);
+    return reverb(L, 0.2);
+  },
+  // grilos à noite
+  grilos(len = 30) {
+    const r = rng(47), L = new Float32Array(len * SR);
+    for (let v = 0; v < 5; v++) { const f = 4200 + r() * 900, rate = 2 + r() * 2, ph = r() * 6; for (let n = 0; n < L.length; n++) { const t = n / SR, gate = Math.max(0, Math.sin(TAU * rate * t + ph)) > 0.6 ? Math.max(0, Math.sin(TAU * 30 * t)) : 0; L[n] += Math.sin(TAU * f * t) * gate * 0.05; } }
+    for (let n = 0; n < L.length; n++) L[n] *= env(n / SR, 3, 3, len);
+    return L;
+  },
+  // sino suave (cartão final)
+  sino(len = 4) {
+    const L = new Float32Array(len * SR);
+    for (let n = 0; n < L.length; n++) { const t = n / SR; L[n] = (Math.sin(TAU * 784 * t) + 0.5 * Math.sin(TAU * 1568 * t) * Math.exp(-t * 2) + 0.25 * Math.sin(TAU * 2352 * t) * Math.exp(-t * 3)) * Math.exp(-t * 1.2) * 0.45; }
+    return reverb(L, 0.35);
+  },
 };
+
 
 function writeWav(file, L) {
   // estéreo com leve "abertura" (atraso de 0,4 ms no canal direito)

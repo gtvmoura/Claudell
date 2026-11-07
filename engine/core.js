@@ -129,7 +129,12 @@ function words(s) {
   }
   return out;
 }
-const wordsHTML = s => words(s).map(({ w, hl, glue }, i) => `${i && !glue ? ' ' : ''}<span class="w${hl ? ' hl' : ''}">${esc(w)}</span>`).join('');
+// palavras coladas (ex.: "Comunidade" + ".") ficam no MESMO bloco, para nunca quebrar a linha entre elas
+function wordsHTML(s) {
+  const groups = [];
+  for (const t of words(s)) { if (t.glue && groups.length) groups[groups.length - 1].push(t); else groups.push([t]); }
+  return groups.map(g => `<span class="w">${g.map(({ w, hl }) => hl ? `<span class="hl">${esc(w)}</span>` : esc(w)).join('')}</span>`).join(' ');
+}
 
 function counterAt(t) {
   const c = script.counter; if (!c) return null;
@@ -165,7 +170,7 @@ function updateOverlay(t) {
   const tw = tc.querySelectorAll('.q .w');
   tw.forEach((el, i) => { const k = clamp((t - 0.25 - i * 0.06) / 0.16); el.style.opacity = k; el.style.transform = `translateY(${(1 - EASE.out(k)) * 30}px) scale(${0.85 + 0.15 * EASE.back(k)})`; });
 
-  const choiceOn = s.choice && t >= s.choice.start;
+  const choiceOn = (s.choice && t >= s.choice.start) || (s.endcard && t >= s.endcard.start);
   const hk = clamp((t - td) / 0.4);
   $('#header').style.opacity = choiceOn ? 0 : hk;
   $('#header').style.transform = `translateY(${(1 - EASE.out(hk)) * -20}px)`;
@@ -200,7 +205,7 @@ function updateOverlay(t) {
   } else { el.style.opacity = 0; }
   // escolha A/B
   const ch = $('#choice');
-  if (choiceOn) {
+  if (s.choice && t >= s.choice.start) {
     const u = t - s.choice.start;
     ch.style.opacity = clamp(u / 0.4);
     const items = [['.ask', 0.0], ['.opt.a', 0.35], ['.opt.b', 0.7], ['.cta', 1.2], ['.sub', 1.5]];
@@ -216,10 +221,49 @@ function updateOverlay(t) {
     ch.querySelector('.opt.a').style.boxShadow = `0 0 ${20 + 40 * Math.max(0, Math.sin(u * 4))}px rgba(255,60,60,.8)`;
     ch.querySelector('.opt.b').style.boxShadow = `0 0 ${20 + 40 * Math.max(0, Math.sin(u * 4 + Math.PI))}px rgba(60,255,120,.7)`;
   } else ch.style.opacity = 0;
+  // cartão final de chamada
+  const ec = $('#endcard');
+  if (s.endcard && t >= s.endcard.start) {
+    const u = t - s.endcard.start;
+    ec.style.opacity = clamp(u / 0.4);
+    const el1 = ec.querySelector('.t1'), k1 = clamp(u / 0.3);
+    el1.style.transform = `scale(${lerp(1.8, 1, EASE.out(k1))})`; el1.style.opacity = k1;
+    ec.querySelectorAll('.line').forEach((ln, i) => { const k = clamp((u - 0.5 - i * 0.35) / 0.3); ln.style.opacity = k; ln.style.transform = `translateX(${(1 - EASE.out(k)) * (i % 2 ? 140 : -140)}px)`; });
+    for (const [sel, d] of [['.cta', 1.6], ['.sub', 2.0]]) { const k = clamp((u - d) / 0.3); const e = ec.querySelector(sel); e.style.opacity = k; e.style.transform = `scale(${(0.8 + 0.2 * EASE.back(k)) * (sel === '.cta' ? 1 + 0.04 * Math.max(0, Math.sin((u - d) * 6)) * clamp(u - d - 0.3) : 1)})`; }
+  } else ec.style.opacity = 0;
+  // etiquetas presas aos personagens (posição 3D -> tela)
+  updateLabels(t, choiceOn);
   // flash
   let f = 0;
   for (const e of s.effects || []) if (e.type === 'flash' && t >= e.t && t < e.t + e.dur) f = Math.max(f, (1 - (t - e.t) / e.dur) * (e.strength ?? 0.6));
   $('#flash').style.opacity = f;
+}
+
+const labelEls = new Map();
+const _v = new THREE.Vector3();
+function updateLabels(t, hideAll) {
+  const list = (!hideAll && world.labels) ? world.labels(t) : [];
+  const seen = new Set();
+  const box = $('#labels');
+  for (const L of list) {
+    _v.set(L.pos[0], L.pos[1], L.pos[2]);
+    const dist = _v.distanceTo(camera.position);
+    _v.project(camera);
+    if (_v.z > 1 || Math.abs(_v.x) > 1.15 || Math.abs(_v.y) > 1.1) continue;
+    const near = L.near ?? 3, far = L.far ?? 16;
+    const a = Math.min(clamp((dist - near * 0.6) / (near * 0.4)), 1 - clamp((dist - far) / 4)) * (L.alpha ?? 1);
+    if (a <= 0.01) continue;
+    let el = labelEls.get(L.id);
+    if (!el) { el = document.createElement('div'); el.className = 'tag' + (L.kind ? ' ' + L.kind : ''); el.innerHTML = `<div class="n"></div>${L.sub ? '<div class="f"></div>' : ''}`; box.appendChild(el); labelEls.set(L.id, el); }
+    el.querySelector('.n').textContent = L.text; if (L.sub) el.querySelector('.f').textContent = L.sub;
+    const x = (_v.x * 0.5 + 0.5) * W, y = (-_v.y * 0.5 + 0.5) * H;
+    const sc = clamp(12 / Math.max(dist, 1), 0.72, 1.05);
+    el.style.opacity = a;
+    el.style.transform = `translate(${x}px, ${y}px) translate(-50%, -100%) scale(${sc})`;
+    el.style.zIndex = String(1000 - Math.round(dist));
+    seen.add(L.id);
+  }
+  for (const [id, el] of labelEls) if (!seen.has(id)) el.style.opacity = 0;
 }
 
 function fillStatic() {
@@ -229,6 +273,12 @@ function fillStatic() {
   $('#header .ep').textContent = s.episode?.label || '';
   $('#header .short').textContent = s.title.short || '';
   if (s.counter) $('#counter .label span').textContent = s.counter.label;
+  if (s.endcard) {
+    $('#endcard .t1').innerHTML = rich(s.endcard.title);
+    $('#endcard .lines').innerHTML = (s.endcard.lines || []).map((l, i) => `<div class="line"><b>${i + 1}</b><span>${rich(l)}</span></div>`).join('');
+    $('#endcard .cta').innerHTML = rich(s.endcard.cta || '');
+    $('#endcard .sub').innerHTML = rich(s.endcard.sub || '');
+  }
   if (s.choice) {
     $('#choice .ask').textContent = s.choice.ask || 'O QUE VOCÊ FAZ?';
     $('#choice .opt.a .txt').textContent = s.choice.a;

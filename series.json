@@ -26,5 +26,19 @@
       "vencedora": null
     }
   ],
-  "hashtag_serie": "#ApocalipseNoCristo"
+  "hashtag_serie": "#ApocalipseNoCristo",
+  "outras_series": [
+    {
+      "serie": "A Comunidade",
+      "pergunta": "E se o mundo acabasse e cada seguidor virasse um cidadão?",
+      "regra": "Seguidores comentam NOME + FUNÇÃO; os comentários escolhidos viram moradores (entradas em cidadaos[] do script.json do próximo episódio).",
+      "episodios": [
+        {
+          "id": "comunidade-ep01",
+          "script": "videos/comunidade-ep01/script.json",
+          "status": "pronto"
+        }
+      ]
+    }
+  ]
 }

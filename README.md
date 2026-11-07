@@ -56,3 +56,15 @@ Câmera: `pos` em metros (`[x, z]` usa y = 1,6 m). `yaw` 0 = olhando para o Cris
 1. Publicar o episódio com o texto de `post` e fixar o `comentario_fixado`.
 2. Após 48 h, contar A × B e anotar em `series.json` (`votos`, `vencedora`).
 3. Criar `videos/<próximo>/script.json` seguindo a opção vencedora e renderizar.
+
+## Série "A Comunidade" (cada seguidor vira cidadão)
+
+- Cena: `engine/scenes/comunidade.js` · Personagens: `engine/lib/people.js` (esqueleto articulado, variações de corpo, pele, cabelo, roupa, chapéu, acessórios e ferramentas; animações por função).
+- Roteiro: `videos/comunidade-ep01/script.json`. Os moradores ficam em `cidadaos[]`:
+  ```json
+  { "id": "lucas", "nome": "Lucas", "funcao": "Pescador", "acao": "parado", "pos": [-4, -27], "yaw": 0, "seed": 101,
+    "visual": { "hair": "afro", "hat": "bone", "topColor": "#2980b9" } }
+  ```
+  `acao`: capinar, martelar, mexer, vigiar, medica, radio, violao, carregar, plantar, estender, painel, alimentar, acenar, dancar, sentado, parado, andar, correr.
+  Sem `visual`, o visual sai sorteado pela `seed` (sempre o mesmo para a mesma seed). `vaga: true` cria um "fantasma" de vaga livre.
+- Para adicionar um seguidor: troque uma entrada `vaga` por um morador com o nome e a função que ele comentou.
