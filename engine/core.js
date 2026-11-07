@@ -277,8 +277,11 @@ function drawTag(g, L) {
   g.fillStyle = '#ffffff'; g.font = '900 34px Montserrat'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(L.text, 0, y + hN / 2 + 2);
 }
 function updateLabels(t, hideAll) {
-  const cv = $('#labels'), g = cv.getContext('2d');
-  g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, W, H);
+  const cap = script.captions.find(c => t >= c.start && t < c.end);
+  const capOn = !!cap, capTop = cap ? (cap.y ?? 1180) : 0;
+  const cv = $('#labels');
+  cv.width = W; // zera e invalida o canvas a cada quadro: a limpeza SEMPRE chega à tela
+  const g = cv.getContext('2d');
   const list = (!hideAll && world.labels) ? world.labels(t) : [];
   const items = [];
   for (const L of list) {
@@ -290,8 +293,9 @@ function updateLabels(t, hideAll) {
     const a = Math.min(clamp((dist - near * 0.6) / (near * 0.4)), 1 - clamp((dist - far) / 4)) * (L.alpha ?? 1);
     const x = (_v.x * 0.5 + 0.5) * W, y = (-_v.y * 0.5 + 0.5) * H;
     const edge = Math.min(clamp((x - 170) / 90), clamp((W - 170 - x) / 90), clamp((y - 330) / 80)); // nunca cortada na borda
-    if (a * edge <= 0.01) continue;
-    items.push({ L, x, y, dist, alpha: a * edge, sc: clamp(12 / Math.max(dist, 1), 0.72, 1.05) });
+    const capBand = capOn ? Math.max(clamp((capTop - 60 - y) / 70), clamp((y - capTop - 330) / 60)) : 1; // não briga com a legenda
+    if (a * edge * capBand <= 0.01) continue;
+    items.push({ L, x, y, dist, alpha: a * edge * capBand, sc: clamp(12 / Math.max(dist, 1), 0.72, 1.05) });
   }
   items.sort((p, q) => q.dist - p.dist || (p.L.id < q.L.id ? -1 : 1)); // de longe para perto
   for (const it of items) {
@@ -396,6 +400,11 @@ window.loadScript = async (s) => {
   window.__three = { scene: null, renderer: null };
   world = await mod.build({ THREE, renderer, scene, camera, script: s, events, helpers: { rng, clamp, lerp, smooth, W, H } });
   fillStatic();
+  { // aquece o canvas das etiquetas (fontes/glifos) para o 1º quadro sair igual aos demais
+    const cv = $('#labels'), g = cv.getContext('2d');
+    for (const kind of ['', 'vaga']) for (const sc of [0.72, 1.05]) { g.setTransform(sc, 0, 0, sc, 540, 960); g.globalAlpha = 0.5; drawTag(g, { text: '@ÁÉÍÓÚÃÕÇ áéíóúãõç 0123456789', sub: 'Função · ÂÊÔ nº', kind }); }
+    cv.width = W;
+  }
   window.__three = { scene, renderer }; // depuração
 
   const post = s.post_fx || {};

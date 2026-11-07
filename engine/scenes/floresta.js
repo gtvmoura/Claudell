@@ -100,7 +100,7 @@ export async function build({ THREE, renderer, scene, camera, script, events, he
     let kp = 0, kb = 0, guard = 0;
     while (kp + kb < N && guard++ < N * 20) {
       const r = CLEAR_R + 1.5 + Math.pow(R(), 1.3) * 150, a = R() * 6.28, x = Math.cos(a) * r, z = Math.sin(a) * r;
-      if (trail(x, z) < 4.8 && z > 0) continue;
+      if (trail(x, z) < (z > CLEAR_R ? 9 : 4.8) && z > 0) continue; // corredor livre para o drone
       const y = groundY(x, z), sc = 0.8 + R() * 0.9;
       q.setFromAxisAngle(up, R() * 6.28);
       if (R() < 0.6) { // pinheiro
@@ -129,8 +129,8 @@ export async function build({ THREE, renderer, scene, camera, script, events, he
   const flag = new THREE.Group(); flag.position.set(1.4, 0, 1.2); scene.add(flag);
   const flagCloth = (() => {
     const cv = document.createElement('canvas'); cv.width = 256; cv.height = 160; const g = cv.getContext('2d');
-    g.fillStyle = '#ffd400'; g.fillRect(0, 0, 256, 160); g.fillStyle = '#111'; g.font = '900 34px Montserrat'; g.textAlign = 'center';
-    g.fillText('A COMUNIDADE', 128, 70); g.font = '900 40px Montserrat'; g.fillText(`POP. ${script.populacao ?? 1}`, 128, 122);
+    g.fillStyle = '#ffd400'; g.fillRect(0, 0, 256, 160); g.fillStyle = '#111'; g.font = '900 27px Montserrat'; g.textAlign = 'center';
+    g.fillText('A COMUNIDADE', 128, 66); g.font = '900 44px Montserrat'; g.fillText(`POP. ${script.populacao ?? 1}`, 128, 122);
     const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace;
     const geo = new THREE.PlaneGeometry(1.5, 0.95, 10, 4); geo.translate(0.75, 0, 0);
     const m = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ map: t, side: THREE.DoubleSide })); m.castShadow = true; return m;
@@ -196,7 +196,12 @@ export async function build({ THREE, renderer, scene, camera, script, events, he
   function founderPos(t) {
     const K = F.trajeto || [[0, 0, 0]];
     if (t <= K[0][0]) return [K[0][1], K[0][2], 0];
-    for (let i = 1; i < K.length; i++) if (t <= K[i][0]) { const u = (t - K[i - 1][0]) / (K[i][0] - K[i - 1][0]); return [lerp(K[i - 1][1], K[i][1], u), lerp(K[i - 1][2], K[i][2], u), 1]; }
+    for (let i = 1; i < K.length; i++) if (t <= K[i][0]) {
+      const u = (t - K[i - 1][0]) / (K[i][0] - K[i - 1][0]);
+      const dist = Math.hypot(K[i][1] - K[i - 1][1], K[i][2] - K[i - 1][2]);
+      const speed = dist / Math.max(1e-6, K[i][0] - K[i - 1][0]);
+      return [lerp(K[i - 1][1], K[i][1], u), lerp(K[i - 1][2], K[i][2], u), dist > 0.05 ? speed : 0]; // 3º valor = velocidade (0 = parado)
+    }
     const L = K[K.length - 1]; return [L[1], L[2], 0];
   }
   const people = [];
@@ -251,14 +256,14 @@ export async function build({ THREE, renderer, scene, camera, script, events, he
       if (moving && Math.hypot(nx[0] - fx, nx[1] - fz) > 1e-4) yaw = Math.atan2(nx[0] - fx, nx[1] - fz);
       founder.root.rotation.y = yaw;
       const act = moving ? 'andar' : (keyAt(F.acoes, t)?.[1] ?? 'parado');
-      const q = (ANIM[act] || ANIM.parado)(t, 0.3);
+      const q = moving ? ANIM.andar(t, 0.3, moving / 1.45) : (ANIM[act] || ANIM.parado)(t, 0.3); // ~0,72 m por passo
       kit.setPose(founder, q);
       labels.length = 0;
       if (F.nome) { labels.push({ id: 'fundador', pos: [fx, fy + 2.35, fz], text: F.nome, sub: F.funcao, near: 1, far: 70, alpha: F.etiquetaAte ? 1 - smooth(F.etiquetaAte, F.etiquetaAte + 0.6, t) : 1 }); }
 
       // ---- bandeira sobe ----
       const fk = tFlag(t) > 0 ? smooth(0, 1.6, tFlag(t)) : 0;
-      flag.visible = fk > 0.001; flag.scale.set(1, Math.max(0.001, fk), 1);
+      flag.visible = tFlag(t) > -0.6; flagCloth.position.y = lerp(0.55, 2.7, fk); flagCloth.visible = fk > 0.001;
       const fa = flagCloth.geometry.attributes.position;
       for (let i = 0; i < fa.count; i++) { const x0 = flagBase[i * 3]; fa.setZ(i, Math.sin(x0 * 3.2 - t * 5) * 0.12 * x0); }
       fa.needsUpdate = true; flagCloth.geometry.computeVertexNormals();
@@ -301,7 +306,7 @@ export async function build({ THREE, renderer, scene, camera, script, events, he
         const x = Math.sin(z.a + wob) * r, zz = Math.cos(z.a + wob) * r;
         z.p.root.position.set(x, groundY(x, zz), zz);
         z.p.root.rotation.y = Math.atan2(-x, -zz) + Math.sin(t * 0.8 + z.ph) * 0.2; // olham para o centro
-        const qz = ANIM.zumbi(t, z.ph, r > z.r1 + 0.01 ? 0.55 : 0.18);
+        const qz = ANIM.zumbi(t, z.ph, r > z.r1 + 0.01 ? z.sp / 1.1 : 0.18);
         kit.setPose(z.p, qz);
       }
       void cam; void V; void HEADP;

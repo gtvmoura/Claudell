@@ -349,7 +349,8 @@
         "ease": "inOut",
         "shake": 0.04,
         "duration": 2.6
-      }
+      },
+      "y": 1460
     },
     {
       "start": 38,
@@ -394,7 +395,7 @@
         },
         "ease": "inOut",
         "shake": 0.04,
-        "duration": 3.0
+        "duration": 2.0
       }
     },
     {
@@ -508,9 +509,9 @@
       125,
       235
     ],
-    "raioIni": 25,
+    "raioIni": 22,
     "raioFim": 9.5,
-    "vel": 1.5
+    "vel": 1.0
   },
   "cidadaos": [
     {
