@@ -70,6 +70,10 @@ fs.mkdirSync(framesDir, { recursive: true });
 fs.mkdirSync(path.dirname(out), { recursive: true });
 console.log(`▶ ${script.title.text}\n  ${N} quadros (${duration}s @ ${FPS}fps, a partir de ${start}s) com ${workers} página(s)`);
 
+// monta o quadro e só retorna depois que o navegador apresentou TODAS as camadas (WebGL + canvas 2D + DOM).
+// Sem isso, com várias páginas em paralelo, a captura pode sair antes de a camada das etiquetas ser composta.
+const renderAndPresent = t => new Promise(res => { window.renderFrame(t); requestAnimationFrame(() => requestAnimationFrame(() => res(true))); });
+
 const browser = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--disable-gpu-vsync'] });
 const t0 = Date.now();
 let done = 0;
@@ -82,7 +86,7 @@ async function worker(w) {
   await page.evaluate(s => window.loadScript(s), script);
   for (let i = w; i < N; i += workers) {
     const t = start + i / FPS;
-    await page.evaluate(t => window.renderFrame(t), t);
+    await page.evaluate(renderAndPresent, t);
     await page.screenshot(PNG ? { path: path.join(framesDir, `f_${String(i).padStart(5, '0')}.png`), type: 'png' } : { path: path.join(framesDir, `f_${String(i).padStart(5, '0')}.jpg`), type: 'jpeg', quality: 95 });
     done++;
     if (done % 30 === 0 || done === N) {
@@ -93,7 +97,7 @@ async function worker(w) {
   if (w === 0 && stills.length) {
     const sd = path.join(path.dirname(out), 'stills'); fs.mkdirSync(sd, { recursive: true });
     for (const t of stills) {
-      await page.evaluate(t => window.renderFrame(t), t);
+      await page.evaluate(renderAndPresent, t);
       await page.screenshot({ path: path.join(sd, `${path.basename(out, '.mp4')}_t${t.toFixed(2)}.png`) });
     }
   }
