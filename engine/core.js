@@ -44,7 +44,9 @@ const $ = s => document.querySelector(s);
 // yaw 0 = olhando para -Z; yaw positivo gira para a esquerda.
 function unwrap(a, ref) { while (a - ref > 180) a -= 360; while (a - ref < -180) a += 360; return a; }
 function normPose(p, prev) {
-  const base = prev || { pos: [0, EYE_HEIGHT, 0], yaw: 0, pitch: 0, fov: 70, roll: 0 };
+  // pose dinâmica: segue um personagem da cena (câmera de drone)
+  if (p && p.follow) return { follow: p.follow, offset: p.offset || [0, 6, 8], lookOffset: p.lookOffset || [0, 1.1, 0], fov: p.fov ?? prev?.fov ?? 70, roll: p.roll || 0 };
+  const base = prev && !prev.follow ? prev : { pos: [0, EYE_HEIGHT, 0], yaw: prev?.yaw ?? 0, pitch: 0, fov: prev?.fov ?? 70, roll: 0 };
   const out = { ...base, ...p };
   delete out.look;
   if (p && p.pos) out.pos = p.pos.length === 2 ? [p.pos[0], EYE_HEIGHT, p.pos[1]] : p.pos.slice();
@@ -73,20 +75,31 @@ function buildCameraKeys(s) {
   }
   return { start, segs };
 }
+// resolve uma pose (estática ou seguindo um personagem) no instante t
+function resolvePose(p, t) {
+  if (!p.follow) return p;
+  const c = world.track(p.follow, t);
+  const pos = [c[0] + p.offset[0], c[1] + p.offset[1], c[2] + p.offset[2]];
+  const L = [c[0] + p.lookOffset[0], c[1] + p.lookOffset[1], c[2] + p.lookOffset[2]];
+  const dx = L[0] - pos[0], dy = L[1] - pos[1], dz = L[2] - pos[2];
+  return { pos, yaw: Math.atan2(-dx, -dz) / DEG, pitch: Math.atan2(dy, Math.hypot(dx, dz)) / DEG, fov: p.fov, roll: p.roll };
+}
 function cameraAt(t) {
   const { start, segs } = camKeys;
-  let pose = start, shake = segs.length ? segs[0].shake : 0.15, walked = 0;
+  let pose = resolvePose(start, t), shake = segs.length ? segs[0].shake : 0.15, walked = 0;
   for (const s of segs) {
-    if (t >= s.t1) { pose = s.b; shake = s.shake; continue; }
+    if (t >= s.t1) { pose = resolvePose(s.b, t); shake = s.shake; continue; }
     if (t >= s.t0) {
       const k = s.ease(clamp((t - s.t0) / Math.max(1e-6, s.t1 - s.t0)));
+      const A = resolvePose(s.a, t), B = resolvePose(s.b, t);
+      const by = unwrap(B.yaw, A.yaw);
       pose = {
-        pos: [0, 1, 2].map(i => lerp(s.a.pos[i], s.b.pos[i], k)),
-        yaw: lerp(s.a.yaw, s.b.yaw, k), pitch: lerp(s.a.pitch, s.b.pitch, k),
-        fov: lerp(s.a.fov, s.b.fov, k), roll: lerp(s.a.roll || 0, s.b.roll || 0, k),
+        pos: [0, 1, 2].map(i => lerp(A.pos[i], B.pos[i], k)),
+        yaw: lerp(A.yaw, by, k), pitch: lerp(A.pitch, B.pitch, k),
+        fov: lerp(A.fov, B.fov, k), roll: lerp(A.roll || 0, B.roll || 0, k),
       };
       shake = s.shake;
-      walked = Math.hypot(s.b.pos[0] - s.a.pos[0], s.b.pos[2] - s.a.pos[2]) * k;
+      if (!s.a.follow && !s.b.follow && (script.camera?.bob ?? true)) walked = Math.hypot(B.pos[0] - A.pos[0], B.pos[2] - A.pos[2]) * k;
       break;
     }
     break; // antes do próximo movimento: segura a pose anterior

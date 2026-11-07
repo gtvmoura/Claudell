@@ -66,6 +66,7 @@ export function makePeopleKit(THREE) {
     const ghostMat = s.ghost ? new THREE.MeshLambertMaterial({ color: '#dfe9f5', transparent: true, opacity: 0.6, emissive: '#7fa6d6', emissiveIntensity: 0.9, depthWrite: false, flatShading: true }) : null;
     const C = c => (ghostMat ? { mat: ghostMat, shadow: false } : {});
     const col = c => c;
+    const eyeMat = s.zombie ? new THREE.MeshBasicMaterial({ color: new THREE.Color(7.0, 0.5, 0.15) }) : null; // olhos que brilham (bloom)
     const root = new THREE.Group();
     const sc = s.height / 1.75;
     const body = J(root); body.scale.setScalar(sc);
@@ -92,7 +93,7 @@ export function makePeopleKit(THREE) {
     head.scale.setScalar(hs);
     add(head, ico(0.115, 1), s.skin, 0, 0.11, 0, { ...C(), scale: [0.92, 1.08, 1] });
     if (!s.ghost) {
-      for (const x of [-0.04, 0.04]) { add(head, box(0.026, 0.024, 0.01), '#1a1a1a', x, 0.125, 0.1, { shadow: false }); add(head, box(0.04, 0.012, 0.01), s.hairColor, x, 0.155, 0.1, { shadow: false }); }
+      for (const x of [-0.04, 0.04]) { add(head, s.zombie ? box(0.045, 0.036, 0.012) : box(0.026, 0.024, 0.01), s.zombie ? '#ff2a1a' : '#1a1a1a', x, 0.125, 0.1, { shadow: false, mat: s.zombie ? eyeMat : undefined }); add(head, box(0.04, 0.012, 0.01), s.hairColor, x, 0.155, 0.1, { shadow: false }); }
       add(head, box(0.022, 0.035, 0.03), s.skin, 0, 0.1, 0.11, { shadow: false });
       add(head, box(0.045, 0.01, 0.01), '#6b2e2e', 0, 0.065, 0.105, { shadow: false });
       if (s.glasses) { for (const x of [-0.042, 0.042]) add(head, box(0.045, 0.035, 0.008), '#111', x, 0.125, 0.112, { shadow: false }); add(head, box(0.03, 0.008, 0.008), '#111', 0, 0.13, 0.113, { shadow: false }); }
@@ -207,4 +208,10 @@ export const ANIM = {
   painel: (t) => ({ rootY: -0.45, hipL: -1.7, hipR: -1.7, knL: 2.4, knR: 2.4, spineX: 0.5, shLx: -1.3, shRx: -1.2 + 0.2 * S(t * 4), elL: -0.4, elR: -0.5, headX: 0.45 }),
   alimentar: (t) => { const c = (t * 0.7) % 1, th = c > 0.7; return { shLx: -1.0, elL: -1.4, shLz: -0.2, shRx: th ? -1.6 : -0.6, shRz: th ? -0.5 : -0.15, elR: th ? -0.2 : -0.9, headX: 0.3, spineX: 0.1 }; },
   fantasma: (t, ph) => ({ ...ANIM.parado(t, ph), shLz: 0.18, shRz: -0.18 }),
+  olhar: (t, ph) => ({ ...ANIM.parado(t, ph), headY: 0.9 * Math.sin(t * 0.9), spineY: 0.25 * Math.sin(t * 0.9), headX: -0.1, shLz: 0.25, shRz: -0.25, elL: -1.6, elR: -1.6, shLx: -0.3, shRx: -0.3 }),
+  assustado: (t, ph) => ({ spineX: -0.15, shLx: -1.2, shRx: -1.2, shLz: -0.3, shRz: 0.3, elL: -1.2, elR: -1.2, hipL: -0.35, knL: 0.4, hipR: 0.25, headX: -0.15 + 0.04 * Math.sin(t * 9), headY: 0.35 * Math.sin(t * 1.3) }),
+  apontar: (t, ph) => ({ ...ANIM.parado(t, ph), shRx: -1.5, shRz: -0.1, elR: -0.05, headY: -0.15 }),
+  zumbi(t, ph, f = 0.55) { const p = t * f * PI2 + ph; const jerk = Math.pow(Math.max(0, Math.sin(t * 1.3 + ph * 3)), 12) * 0.8;
+    return { hipL: -0.35 * S(p), hipR: 0.18 * S(p), knL: 0.5 * Math.max(0, S(p + 1.3)), knR: 0.25 * Math.max(0, S(p + 1.3 + Math.PI)), spineX: 0.3, spineZ: 0.15 * S(p * 0.5),
+      shLx: -1.45 + 0.15 * S(p * 1.7), shRx: -1.5 + 0.15 * S(p * 1.3 + 1), shLz: -0.1, shRz: 0.1, elL: -0.2, elR: -0.3, headX: 0.35, headZ: 0.3 * S(ph) + jerk, rootY: 0.03 * Math.abs(Math.cos(p)) }; },
 };
