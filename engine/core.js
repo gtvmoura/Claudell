@@ -35,7 +35,7 @@ const EASE = {
 const DEG = Math.PI / 180;
 
 // ---------- estado ----------
-let script, renderer, scene, camera, world, camKeys, events, composer, finalPass;
+let script, renderer, scene, camera, world, camKeys, events, composer, finalPass, bloomPass;
 const $ = s => document.querySelector(s);
 
 // ---------- câmera: um movimento por legenda ----------
@@ -239,12 +239,35 @@ function updateOverlay(t) {
   $('#flash').style.opacity = f;
 }
 
-const labelEls = new Map();
+// Etiquetas presas aos personagens: desenhadas num canvas 2D (determinístico, sem camadas do compositor)
 const _v = new THREE.Vector3();
+function rrect(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
+function drawTag(g, L) {
+  const vaga = L.kind === 'vaga';
+  g.font = '900 34px Montserrat'; const wN = g.measureText(L.text).width + 36;
+  let wS = 0; if (L.sub) { g.font = '800 24px Montserrat'; wS = g.measureText(L.sub).width + 26; }
+  const hN = 48, hS = 32, arrow = 12;
+  let y = -arrow;
+  // seta
+  g.fillStyle = vaga ? '#ffffff' : '#ffd400';
+  g.beginPath(); g.moveTo(-10, y - 1); g.lineTo(10, y - 1); g.lineTo(0, 0); g.closePath(); g.fill();
+  if (L.sub) {
+    y -= hS + 2;
+    g.fillStyle = vaga ? '#ffffff' : '#ffd400'; rrect(g, -wS / 2, y, wS, hS, 10); g.fill();
+    g.fillStyle = '#111111'; g.font = '800 24px Montserrat'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(L.sub, 0, y + hS / 2 + 1);
+    y -= 4;
+  }
+  y -= hN;
+  g.fillStyle = vaga ? 'rgba(255,255,255,0.14)' : 'rgba(15,18,24,0.80)'; rrect(g, -wN / 2, y, wN, hN, 14); g.fill();
+  g.lineWidth = 3; g.strokeStyle = vaga ? '#ffffff' : '#ffd400';
+  if (vaga) g.setLineDash([10, 7]); rrect(g, -wN / 2, y, wN, hN, 14); g.stroke(); g.setLineDash([]);
+  g.fillStyle = '#ffffff'; g.font = '900 34px Montserrat'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(L.text, 0, y + hN / 2 + 2);
+}
 function updateLabels(t, hideAll) {
+  const cv = $('#labels'), g = cv.getContext('2d');
+  g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, W, H);
   const list = (!hideAll && world.labels) ? world.labels(t) : [];
-  const seen = new Set();
-  const box = $('#labels');
+  const items = [];
   for (const L of list) {
     _v.set(L.pos[0], L.pos[1], L.pos[2]);
     const dist = _v.distanceTo(camera.position);
@@ -252,18 +275,18 @@ function updateLabels(t, hideAll) {
     if (_v.z > 1 || Math.abs(_v.x) > 1.15 || Math.abs(_v.y) > 1.1) continue;
     const near = L.near ?? 3, far = L.far ?? 16;
     const a = Math.min(clamp((dist - near * 0.6) / (near * 0.4)), 1 - clamp((dist - far) / 4)) * (L.alpha ?? 1);
-    if (a <= 0.01) continue;
-    let el = labelEls.get(L.id);
-    if (!el) { el = document.createElement('div'); el.className = 'tag' + (L.kind ? ' ' + L.kind : ''); el.innerHTML = `<div class="n"></div>${L.sub ? '<div class="f"></div>' : ''}`; box.appendChild(el); labelEls.set(L.id, el); }
-    el.querySelector('.n').textContent = L.text; if (L.sub) el.querySelector('.f').textContent = L.sub;
     const x = (_v.x * 0.5 + 0.5) * W, y = (-_v.y * 0.5 + 0.5) * H;
-    const sc = clamp(12 / Math.max(dist, 1), 0.72, 1.05);
-    el.style.opacity = a;
-    el.style.transform = `translate(${x}px, ${y}px) translate(-50%, -100%) scale(${sc})`;
-    el.style.zIndex = String(1000 - Math.round(dist));
-    seen.add(L.id);
+    const edge = Math.min(clamp((x - 170) / 90), clamp((W - 170 - x) / 90), clamp((y - 330) / 80)); // nunca cortada na borda
+    if (a * edge <= 0.01) continue;
+    items.push({ L, x, y, dist, alpha: a * edge, sc: clamp(12 / Math.max(dist, 1), 0.72, 1.05) });
   }
-  for (const [id, el] of labelEls) if (!seen.has(id)) el.style.opacity = 0;
+  items.sort((p, q) => q.dist - p.dist || (p.L.id < q.L.id ? -1 : 1)); // de longe para perto
+  for (const it of items) {
+    g.setTransform(it.sc, 0, 0, it.sc, Math.round(it.x), Math.round(it.y));
+    g.globalAlpha = it.alpha;
+    drawTag(g, it.L);
+  }
+  g.globalAlpha = 1; g.setTransform(1, 0, 0, 1, 0, 0);
 }
 
 function fillStatic() {
@@ -368,7 +391,7 @@ window.loadScript = async (s) => {
   composer.setPixelRatio(1);
   composer.setSize(W, H);
   composer.addPass(new RenderPass(scene, camera));
-  if ((post.bloom ?? 0.55) > 0) composer.addPass(new UnrealBloomPass(new THREE.Vector2(W / 3, H / 3), post.bloom ?? 0.55, 0.6, post.bloomThreshold ?? 0.82));
+  if ((post.bloom ?? 0.55) > 0) composer.addPass(bloomPass = new UnrealBloomPass(new THREE.Vector2(W / 3, H / 3), post.bloom ?? 0.55, 0.6, post.bloomThreshold ?? 0.82));
   finalPass = new ShaderPass(FinalShader);
   composer.addPass(finalPass);
 
@@ -385,6 +408,11 @@ window.renderFrame = (t) => {
   if (camera.fov !== c.fov) { camera.fov = c.fov; camera.updateProjectionMatrix(); }
   camera.updateMatrixWorld(true);
   world.update(t, { camera, pose: c });
+  // zera todos os buffers intermediários: nada do quadro anterior pode vazar para este
+  const rts = [composer.renderTarget1, composer.renderTarget2];
+  if (bloomPass) rts.push(bloomPass.renderTargetBright, ...bloomPass.renderTargetsHorizontal, ...bloomPass.renderTargetsVertical);
+  for (const r of rts) { renderer.setRenderTarget(r); renderer.setClearColor(0x000000, 0); renderer.clear(true, true, true); }
+  renderer.setRenderTarget(null);
   finalPass.uniforms.uTime.value = t;
   finalPass.uniforms.uTension.value = world.tension ? world.tension(t) : 0;
   finalPass.uniforms.uExposure.value = renderer.toneMappingExposure;

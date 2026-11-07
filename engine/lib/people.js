@@ -63,7 +63,7 @@ export function makePeopleKit(THREE) {
     const s = { height: 1.75, build: 1, skin: SKINS[2], hair: 'curto', hairColor: HAIR_COLORS[0], top: 'camiseta', topColor: CLOTHES[0], top2: CLOTHES[9],
       pants: PANTS[0], shorts: false, skirt: false, shoes: '#2b2b2b', hat: null, hatColor: '#c0392b', beard: false, glasses: false, backpack: false,
       scarf: null, apron: null, coat: false, headphones: false, kid: false, ghost: false, ...spec };
-    const ghostMat = s.ghost ? new THREE.MeshLambertMaterial({ color: '#cfd8e3', transparent: true, opacity: 0.42, emissive: '#5b6b80', emissiveIntensity: 0.6, depthWrite: false, flatShading: true }) : null;
+    const ghostMat = s.ghost ? new THREE.MeshLambertMaterial({ color: '#dfe9f5', transparent: true, opacity: 0.6, emissive: '#7fa6d6', emissiveIntensity: 0.9, depthWrite: false, flatShading: true }) : null;
     const C = c => (ghostMat ? { mat: ghostMat, shadow: false } : {});
     const col = c => c;
     const root = new THREE.Group();
@@ -148,7 +148,7 @@ export function makePeopleKit(THREE) {
     if (s.tool === 'violao') tool = guitar(spine);
     else if (s.tool && TOOLS[s.tool]) tool = TOOLS[s.tool](arms.R.hand);
     const joints = { root, body, hips, spine, neck, head, ...Object.fromEntries(Object.entries(arms).flatMap(([k, v]) => [[`sh${k}`, v.sh], [`el${k}`, v.el], [`hand${k}`, v.hand]])), ...Object.fromEntries(Object.entries(legs).flatMap(([k, v]) => [[`hip${k}`, v.hp], [`kn${k}`, v.kn]])) };
-    return { root, joints, height: s.height, spec: s, tool };
+    return { root, joints, height: s.height, spec: s, tool, ghostMat };
   }
 
   // aplica uma pose (todos os campos opcionais)

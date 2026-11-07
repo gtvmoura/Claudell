@@ -10,6 +10,8 @@
   "height": 1920,
   "fps": 30,
   "duration": 68,
+  "construido": [],
+  "populacao": 1,
   "title": {
     "kicker": "E SE...",
     "text": "o mundo acabasse e *cada seguidor* virasse um *cidadão*?",
@@ -19,12 +21,12 @@
       "to": {
         "pos": [
           0,
-          57
+          37
         ],
         "look": [
           0,
-          3.5,
-          44
+          1.5,
+          0
         ]
       },
       "ease": "out",
@@ -35,288 +37,45 @@
     "start": {
       "pos": [
         0,
-        60
+        40
       ],
       "yaw": 0,
-      "pitch": 3,
+      "pitch": 0,
       "fov": 70
     }
   },
   "counter": {
     "label": "Moradores",
     "format": "number",
-    "showAt": 11,
+    "showAt": 15.5,
     "keys": [
       [
         0,
-        14
+        1
       ],
       [
         68,
-        14
+        1
       ]
     ]
   },
   "captions": [
     {
-      "start": 3.0,
-      "end": 7.0,
-      "text": "Ano 3 depois do fim. O mundo acabou… *mas a gente não.*",
-      "camera": {
-        "to": {
-          "pos": [
-            0.3,
-            53
-          ],
-          "look": [
-            0,
-            3,
-            44
-          ]
-        },
-        "ease": "inOut",
-        "shake": 0.08,
-        "duration": 2.6
-      }
-    },
-    {
-      "start": 7.0,
-      "end": 11.0,
-      "text": "Na entrada, o *Kauã* vigia a estrada. Dia e noite.",
-      "camera": {
-        "to": {
-          "pos": [
-            0.8,
-            50.5
-          ],
-          "look": [
-            6.5,
-            7.0,
-            42.5
-          ],
-          "fov": 46
-        },
-        "ease": "inOut",
-        "shake": 0.08,
-        "duration": 2.6
-      }
-    },
-    {
-      "start": 11.0,
-      "end": 15.0,
-      "text": "Isso aqui é *a Comunidade*. Cada pessoa tem uma função.",
+      "start": 3,
+      "end": 7,
+      "text": "Ano 1 depois do fim. *A cidade virou ruína.*",
       "camera": {
         "to": {
           "pos": [
             0.5,
-            37
+            35
           ],
           "look": [
-            0,
-            2,
-            10
-          ],
-          "fov": 76
-        },
-        "ease": "inOut",
-        "shake": 0.08,
-        "duration": 2.6
-      }
-    },
-    {
-      "start": 15.0,
-      "end": 19.0,
-      "text": "A *Ana* planta milho, tomate e mandioca.",
-      "camera": {
-        "to": {
-          "pos": [
-            2.5,
-            27.5
-          ],
-          "look": [
-            9,
-            1.1,
-            20
-          ],
-          "fov": 50
-        },
-        "ease": "inOut",
-        "shake": 0.08,
-        "duration": 2.6
-      }
-    },
-    {
-      "start": 19.0,
-      "end": 23.0,
-      "text": "O *Seu Jorge* conserta tudo que quebra.",
-      "camera": {
-        "to": {
-          "pos": [
-            -1.5,
-            22.5
-          ],
-          "look": [
-            -8.4,
-            1.2,
-            16.3
-          ],
-          "fov": 64
-        },
-        "ease": "inOut",
-        "shake": 0.08,
-        "duration": 2.6
-      }
-    },
-    {
-      "start": 23.0,
-      "end": 28.0,
-      "text": "A *Bia* cozinha pra 40 pessoas. Todo santo dia.",
-      "camera": {
-        "to": {
-          "pos": [
-            -2.5,
-            6.5
-          ],
-          "look": [
-            -10,
-            1.1,
-            -3.8
-          ],
-          "fov": 60
-        },
-        "ease": "inOut",
-        "shake": 0.08,
-        "duration": 2.6
-      }
-    },
-    {
-      "start": 28.0,
-      "end": 32.0,
-      "text": "A *Dra. Lúcia* cuida de quem se machuca.",
-      "camera": {
-        "to": {
-          "pos": [
-            6.5,
-            3.5
-          ],
-          "look": [
-            7.5,
-            1.2,
-            -4
-          ],
-          "fov": 56
-        },
-        "ease": "inOut",
-        "shake": 0.08,
-        "duration": 2.6
-      }
-    },
-    {
-      "start": 32.0,
-      "end": 36.0,
-      "text": "O *Theo* passa a noite no rádio. Procurando outros sobreviventes.",
-      "camera": {
-        "to": {
-          "pos": [
-            -5.5,
-            -3
-          ],
-          "look": [
-            -8.5,
-            1.0,
-            -12.3
-          ],
-          "fov": 56
-        },
-        "ease": "inOut",
-        "shake": 0.08,
-        "duration": 2.6
-      }
-    },
-    {
-      "start": 36.0,
-      "end": 41.0,
-      "text": "E quando escurece… *todo mundo* vai pra fogueira.",
-      "camera": {
-        "to": {
-          "pos": [
-            1.5,
-            6
-          ],
-          "look": [
-            0,
-            1.0,
-            0
-          ],
-          "fov": 72
-        },
-        "ease": "inOut",
-        "shake": 0.08,
-        "duration": 2.6
-      }
-    },
-    {
-      "start": 41.0,
-      "end": 46.0,
-      "text": "Horta, moinho, água limpa e energia solar. *A gente reconstruiu.*",
-      "camera": {
-        "to": {
-          "pos": [
-            -3,
-            5.6,
-            -9.5
-          ],
-          "look": [
-            2,
-            0,
-            22
-          ],
-          "fov": 74
-        },
-        "ease": "inOut",
-        "shake": 0.08,
-        "duration": 2.6
-      }
-    },
-    {
-      "start": 46.0,
-      "end": 50.0,
-      "text": "Mas ainda *falta gente.*",
-      "camera": {
-        "to": {
-          "pos": [
-            -3,
-            5.6,
-            -10
-          ],
-          "look": [
-            0,
-            1.5,
-            -29
+            -70,
+            22,
+            -90
           ],
           "fov": 66
-        },
-        "duration": 2.0,
-        "ease": "inOut",
-        "shake": 0.08
-      }
-    },
-    {
-      "start": 50.0,
-      "end": 55.0,
-      "text": "Tem *casa vazia*… e função sem ninguém.",
-      "camera": {
-        "to": {
-          "pos": [
-            0,
-            -17
-          ],
-          "look": [
-            -11,
-            1.4,
-            -28
-          ],
-          "fov": 76
         },
         "ease": "inOut",
         "duration": 3.0,
@@ -324,86 +83,325 @@
       }
     },
     {
-      "start": 55.0,
-      "end": 60.0,
-      "text": "Pescador. Professor. Mecânico. Artista. Padeiro. *Explorador.*",
+      "start": 7,
+      "end": 11,
+      "text": "No meio dos escombros… *eu achei um lugar.*",
+      "camera": {
+        "to": {
+          "pos": [
+            0.3,
+            27
+          ],
+          "look": [
+            0,
+            1.0,
+            0
+          ],
+          "fov": 64
+        },
+        "ease": "inOut",
+        "duration": 3.0,
+        "shake": 0.08
+      }
+    },
+    {
+      "start": 11,
+      "end": 15,
+      "text": "Uma barraca. Água da chuva. *Uma fogueira.*",
       "camera": {
         "to": {
           "pos": [
             0.5,
-            -16.5
+            13
           ],
           "look": [
-            11,
-            1.4,
-            -28
+            -2,
+            0.8,
+            -2
           ],
-          "fov": 76
+          "fov": 66
         },
         "ease": "inOut",
-        "duration": 5.0,
+        "duration": 3.4,
+        "shake": 0.08
+      }
+    },
+    {
+      "start": 15,
+      "end": 19,
+      "text": "Por enquanto, o único morador sou eu: *@esefossevoceai*.",
+      "camera": {
+        "to": {
+          "pos": [
+            1.8,
+            11.2
+          ],
+          "look": [
+            3.6,
+            1.25,
+            8.0
+          ],
+          "fov": 62
+        },
+        "ease": "inOut",
+        "duration": 2.4,
         "shake": 0.06
       }
     },
     {
-      "start": 60.0,
-      "end": 63.5,
-      "text": "*Quer morar aqui?*",
+      "start": 19,
+      "end": 23,
+      "text": "Mas sozinho… *ninguém sobrevive muito tempo.*",
       "camera": {
         "to": {
           "pos": [
-            0,
-            -15
+            1.2,
+            4.6
           ],
           "look": [
             0,
-            2,
-            4
+            0.6,
+            0
+          ],
+          "fov": 66
+        },
+        "ease": "inOut",
+        "duration": 2.6,
+        "shake": 0.06
+      }
+    },
+    {
+      "start": 23,
+      "end": 28,
+      "text": "Então eu tive uma ideia.",
+      "camera": {
+        "to": {
+          "pos": [
+            0.8,
+            5.5
+          ],
+          "look": [
+            -40,
+            6,
+            -60
           ],
           "fov": 70
         },
         "ease": "inOut",
-        "shake": 0.08,
-        "duration": 2.6
+        "duration": 3.0,
+        "shake": 0.06
+      }
+    },
+    {
+      "start": 28,
+      "end": 33,
+      "text": "E se *cada seguidor* virasse um morador daqui?",
+      "camera": {
+        "to": {
+          "pos": [
+            0,
+            9.5
+          ],
+          "look": [
+            0,
+            1.2,
+            0
+          ],
+          "fov": 78
+        },
+        "ease": "inOut",
+        "duration": 2.6,
+        "shake": 0.06
+      }
+    },
+    {
+      "start": 33,
+      "end": 38,
+      "text": "Cada um com *nome* e uma *função* na comunidade.",
+      "camera": {
+        "to": {
+          "pos": [
+            0.3,
+            9.0
+          ],
+          "look": [
+            3,
+            1.2,
+            -1
+          ],
+          "fov": 74
+        },
+        "ease": "inOut",
+        "duration": 4.5,
+        "shake": 0.05
+      }
+    },
+    {
+      "start": 38,
+      "end": 43,
+      "text": "A cada vídeo, o acampamento *cresce*…",
+      "camera": {
+        "to": {
+          "pos": [
+            0.2,
+            4.55,
+            19.3
+          ],
+          "look": [
+            0,
+            0,
+            -8
+          ],
+          "fov": 80
+        },
+        "ease": "inOut",
+        "duration": 3.4,
+        "shake": 0.06
+      }
+    },
+    {
+      "start": 43,
+      "end": 48,
+      "text": "Muro, horta, oficina, rádio, casas… *e vocês decidem a ordem.*",
+      "camera": {
+        "to": {
+          "pos": [
+            0.2,
+            4.55,
+            19.3
+          ],
+          "look": [
+            -10,
+            0,
+            -14
+          ],
+          "fov": 82
+        },
+        "ease": "inOut",
+        "duration": 4.5,
+        "shake": 0.05
+      }
+    },
+    {
+      "start": 48,
+      "end": 53,
+      "text": "Mas tudo começa *aqui*.",
+      "camera": {
+        "to": {
+          "pos": [
+            1.2,
+            5
+          ],
+          "look": [
+            0,
+            0.7,
+            0
+          ],
+          "fov": 66
+        },
+        "ease": "inOut",
+        "duration": 3.0,
+        "shake": 0.06
+      }
+    },
+    {
+      "start": 53,
+      "end": 58,
+      "text": "Comenta seu *nome* e sua *função*: você vira morador no próximo vídeo.",
+      "camera": {
+        "to": {
+          "pos": [
+            1.9,
+            11.0
+          ],
+          "look": [
+            3.6,
+            1.25,
+            8.0
+          ],
+          "fov": 62
+        },
+        "ease": "inOut",
+        "duration": 3.0,
+        "shake": 0.06
+      }
+    },
+    {
+      "start": 58,
+      "end": 62,
+      "text": "E vota: *o que a gente constrói primeiro?*",
+      "camera": {
+        "to": {
+          "pos": [
+            0.5,
+            7
+          ],
+          "look": [
+            -6,
+            2.5,
+            -30
+          ],
+          "fov": 72
+        },
+        "ease": "inOut",
+        "duration": 3.0,
+        "shake": 0.06
       }
     }
   ],
-  "endcard": {
-    "start": 63.5,
-    "title": "QUER MORAR NA *COMUNIDADE?*",
-    "lines": [
-      "Comenta seu *nome*",
-      "E o que você faria *aqui*"
-    ],
-    "cta": "Você vira *cidadão* no próximo vídeo",
-    "sub": "Vagas: pescador · professor · mecânico · artista · padeiro · explorador"
+  "choice": {
+    "start": 62,
+    "ask": "O QUE CONSTRUÍMOS PRIMEIRO?",
+    "a": "Muro de proteção contra saqueadores",
+    "b": "Horta pra ter comida todo dia",
+    "cta": "COMENTE A OU B",
+    "sub": "+ seu NOME e FUNÇÃO pra virar morador"
   },
   "events": [
     {
-      "t": 33,
+      "t": 30,
       "id": "luzes"
     },
     {
-      "t": 37.5,
-      "id": "noite"
+      "t": 38.6,
+      "id": "planta_on"
+    },
+    {
+      "t": 47.6,
+      "id": "planta_off"
     }
   ],
   "effects": [],
+  "etiquetas": [
+    {
+      "id": "fundador",
+      "pos": [
+        -3.6,
+        2.25,
+        -2.4
+      ],
+      "texto": "@esefossevoceai",
+      "sub": "Morador nº 1 · Fundador",
+      "desde": 15.3,
+      "ate": 27.5,
+      "longe": 30
+    }
+  ],
   "sounds": [
     {
       "t": 0,
+      "sfx": "vento",
+      "vol": 0.4
+    },
+    {
+      "t": 0,
       "sfx": "lofi",
-      "vol": 0.85
+      "vol": 0.7
     },
     {
       "t": 0,
       "sfx": "passaros",
-      "vol": 0.45
-    },
-    {
-      "t": 0,
-      "sfx": "vento",
-      "vol": 0.15
+      "vol": 0.22
     },
     {
       "t": 2.7,
@@ -411,420 +409,121 @@
       "vol": 0.25
     },
     {
-      "t": 19,
-      "sfx": "martelo",
-      "vol": 0.55
-    },
-    {
-      "t": 34,
+      "t": 9,
       "sfx": "fogueira",
-      "vol": 0.55
+      "vol": 0.5
     },
     {
-      "t": 36,
-      "sfx": "violao",
-      "vol": 0.5
+      "t": 28.2,
+      "sfx": "whoosh",
+      "vol": 0.35
+    },
+    {
+      "t": 38.6,
+      "sfx": "whoosh",
+      "vol": 0.4
     },
     {
       "t": 40,
       "sfx": "grilos",
-      "vol": 0.45
+      "vol": 0.4
     },
     {
-      "t": 63.5,
+      "t": 62,
       "sfx": "sino",
       "vol": 0.7
     }
   ],
   "cidadaos": [
     {
-      "id": "kaua",
-      "nome": "Kauã",
+      "id": "g1",
+      "vaga": true,
+      "funcao": "Agricultor(a)",
+      "pos": [
+        -2.5,
+        4.2
+      ],
+      "yaw": 149.2,
+      "seed": 50,
+      "aparece": 28.3,
+      "some": 38.2,
+      "longe": 24
+    },
+    {
+      "id": "g2",
+      "vaga": true,
+      "funcao": "Médico(a)",
+      "pos": [
+        2.8,
+        4.3
+      ],
+      "yaw": -146.9,
+      "seed": 51,
+      "aparece": 28.650000000000002,
+      "some": 38.2,
+      "longe": 24
+    },
+    {
+      "id": "g3",
+      "vaga": true,
       "funcao": "Vigia",
-      "acao": "vigiar",
       "pos": [
-        6.5,
-        43.6
+        5.0,
+        0.8
       ],
-      "y": 5.7,
-      "yaw": 0,
-      "seed": 11,
-      "longe": 22
+      "yaw": -99.1,
+      "seed": 52,
+      "aparece": 29.0,
+      "some": 38.2,
+      "longe": 24
     },
     {
-      "id": "ana",
-      "nome": "Ana",
-      "funcao": "Agricultora",
-      "acao": "capinar",
-      "pos": [
-        9,
-        20
-      ],
-      "yaw": -100,
-      "seed": 12,
-      "visual": {
-        "hair": "trancas",
-        "skin": "#8a5636"
-      },
-      "longe": 22
-    },
-    {
-      "id": "yara",
-      "nome": "Yara",
-      "funcao": "Horta",
-      "acao": "plantar",
-      "pos": [
-        15.5,
-        22
-      ],
-      "yaw": -160,
-      "seed": 13,
-      "longe": 22
-    },
-    {
-      "id": "jorge",
-      "nome": "Seu Jorge",
-      "funcao": "Ferreiro",
-      "acao": "martelar",
-      "pos": [
-        -8.4,
-        16.3
-      ],
-      "yaw": 0,
-      "seed": 14,
-      "visual": {
-        "beard": true,
-        "hair": "raspado",
-        "hairColor": "#9a9a9a",
-        "build": 1.25,
-        "skin": "#6b4128"
-      },
-      "olha": false,
-      "longe": 22
-    },
-    {
-      "id": "bia",
-      "nome": "Bia",
-      "funcao": "Cozinheira",
-      "acao": "mexer",
-      "pos": [
-        -10,
-        -3.8
-      ],
-      "yaw": 0,
-      "seed": 15,
-      "visual": {
-        "hair": "afro",
-        "skin": "#a86e47"
-      },
-      "olha": false,
-      "longe": 22
-    },
-    {
-      "id": "lucia",
-      "nome": "Dra. Lúcia",
-      "funcao": "Médica",
-      "acao": "medica",
-      "pos": [
-        7.5,
-        -4
-      ],
-      "yaw": -130,
-      "seed": 16,
-      "visual": {
-        "hair": "coque",
-        "hairColor": "#9a9a9a",
-        "skin": "#eac09b"
-      },
-      "longe": 22
-    },
-    {
-      "id": "theo",
-      "nome": "Theo",
-      "funcao": "Rádio",
-      "acao": "radio",
-      "pos": [
-        -8.5,
-        -12.3
-      ],
-      "yaw": 0,
-      "seed": 17,
-      "visual": {
-        "glasses": true,
-        "hair": "franja"
-      },
-      "olha": false,
-      "longe": 22
-    },
-    {
-      "id": "rafa",
-      "nome": "Rafa",
-      "funcao": "Músico",
-      "acao": "violao",
-      "pos": [
-        0.58,
-        -3.05
-      ],
-      "yaw": -11,
-      "seed": 18,
-      "visual": {
-        "hair": "longo",
-        "beard": true
-      },
-      "olha": false,
-      "longe": 22
-    },
-    {
-      "id": "cida",
-      "nome": "Dona Cida",
-      "funcao": "Costureira",
-      "acao": "estender",
-      "pos": [
-        -16,
-        3.2
-      ],
-      "yaw": 15,
-      "seed": 19,
-      "visual": {
-        "hair": "coque",
-        "hairColor": "#e8e1d6",
-        "skirt": true,
-        "pants": "#8e44ad"
-      }
-    },
-    {
-      "id": "pedro",
-      "nome": "Pedro",
-      "funcao": "Construtor",
-      "acao": "carregar",
-      "pos": [
-        3,
-        34
-      ],
-      "rota": [
-        [
-          3,
-          34
-        ],
-        [
-          13,
-          29
-        ]
-      ],
-      "vel": 1.0,
-      "seed": 20
-    },
-    {
-      "id": "julia",
-      "nome": "Júlia",
-      "funcao": "Eletricista",
-      "acao": "painel",
-      "pos": [
-        15.6,
-        30.6
-      ],
-      "y": 2.62,
-      "yaw": 160,
-      "seed": 21
-    },
-    {
-      "id": "tiao",
-      "nome": "Tião",
-      "funcao": "Bichos",
-      "acao": "alimentar",
-      "pos": [
-        -12.5,
-        26
-      ],
-      "yaw": -110,
-      "seed": 22,
-      "visual": {
-        "hat": "chapeu"
-      }
-    },
-    {
-      "id": "malu",
-      "nome": "Malu",
-      "funcao": "Criança",
-      "acao": "parado",
-      "crianca": true,
-      "pos": [
-        4.0,
-        30.8
-      ],
-      "yaw": 75,
-      "seed": 23
-    },
-    {
-      "id": "davi",
-      "nome": "Davi",
-      "funcao": "Criança",
-      "acao": "parado",
-      "crianca": true,
-      "pos": [
-        10.0,
-        32.7
-      ],
-      "yaw": -105,
-      "seed": 24
-    },
-    {
-      "id": "x1",
-      "acao": "sentado",
-      "noite": "dancar",
-      "pos": [
-        3.06,
-        0.95
-      ],
-      "yaw": -108,
-      "seed": 31
-    },
-    {
-      "id": "x2",
-      "acao": "sentado",
-      "noite": "dancar",
-      "pos": [
-        -3.28,
-        -0.87
-      ],
-      "yaw": 75,
-      "seed": 32
-    },
-    {
-      "id": "x3",
-      "acao": "sentado",
-      "noite": "dancar",
-      "pos": [
-        -0.97,
-        2.84
-      ],
-      "yaw": 161,
-      "seed": 33
-    },
-    {
-      "id": "x4",
-      "acao": "parado",
-      "noite": "dancar",
-      "pos": [
-        2.6,
-        -2.2
-      ],
-      "yaw": -130,
-      "seed": 34
-    },
-    {
-      "id": "x5",
-      "acao": "acenar",
-      "pos": [
-        -3,
-        38
-      ],
-      "yaw": 170,
-      "seed": 35
-    },
-    {
-      "id": "x6",
-      "acao": "andar",
-      "pos": [
-        -2,
-        -18
-      ],
-      "rota": [
-        [
-          -4.5,
-          -20
-        ],
-        [
-          -4.5,
-          -12
-        ]
-      ],
-      "vel": 1.1,
-      "seed": 36
-    },
-    {
-      "id": "v1",
+      "id": "g4",
       "vaga": true,
-      "funcao": "Pescador(a)",
+      "funcao": "Cozinheiro(a)",
       "pos": [
-        -12,
-        -28.3
+        4.3,
+        -4.4
       ],
-      "yaw": 0,
-      "seed": 41,
-      "longe": 32,
-      "desde": 46
+      "yaw": -44.3,
+      "seed": 53,
+      "aparece": 29.35,
+      "some": 38.2,
+      "longe": 24
     },
     {
-      "id": "v2",
-      "vaga": true,
-      "funcao": "Professor(a)",
-      "pos": [
-        -4,
-        -30.3
-      ],
-      "yaw": 0,
-      "seed": 42,
-      "longe": 32,
-      "desde": 46
-    },
-    {
-      "id": "v3",
+      "id": "g5",
       "vaga": true,
       "funcao": "Mecânico(a)",
       "pos": [
-        4,
-        -30.3
+        0.2,
+        -5.2
       ],
-      "yaw": 0,
-      "seed": 43,
-      "longe": 32,
-      "desde": 46
+      "yaw": -2.2,
+      "seed": 54,
+      "aparece": 29.7,
+      "some": 38.2,
+      "longe": 24
     },
     {
-      "id": "v4",
+      "id": "g6",
       "vaga": true,
-      "funcao": "Artista",
+      "funcao": "Professor(a)",
       "pos": [
-        12,
-        -28.3
+        -5.6,
+        1.6
       ],
-      "yaw": 0,
-      "seed": 44,
-      "longe": 32,
-      "desde": 46
-    },
-    {
-      "id": "v5",
-      "vaga": true,
-      "funcao": "Padeiro(a)",
-      "pos": [
-        19.2,
-        -24.6
-      ],
-      "yaw": -20,
-      "seed": 45,
-      "longe": 32,
-      "desde": 46
-    },
-    {
-      "id": "v6",
-      "vaga": true,
-      "funcao": "Explorador(a)",
-      "pos": [
-        -19.2,
-        -24.6
-      ],
-      "yaw": 20,
-      "seed": 46,
-      "longe": 32,
-      "desde": 46
+      "yaw": 105.9,
+      "seed": 55,
+      "aparece": 30.05,
+      "some": 38.2,
+      "longe": 24
     }
   ],
   "post": {
     "canal": "@esefossevoceai",
     "titulo": "E se o mundo acabasse e cada seguidor virasse um cidadão? (Parte 1)",
-    "descricao": "Parte 1 🏡 O mundo acabou, mas a gente reconstruiu. Comenta seu NOME + o que você faria na comunidade e você vira cidadão no próximo vídeo! #AComunidade #pov #oquevocêfaria #lowpoly #fimdomundo",
-    "comentario_fixado": "🏡 INSCRIÇÕES ABERTAS — responda com:\nNOME + FUNÇÃO (ex.: \"Lucas, pescador\")\nOs comentários mais curtidos viram moradores na Parte 2!"
+    "descricao": "Parte 1 🏕️ O mundo acabou e eu sou o único morador… por enquanto. Comenta seu NOME + FUNÇÃO pra virar morador, e vota A ou B: o que a gente constrói primeiro? #AComunidade #pov #fimdomundo #lowpoly #oquevocêfaria",
+    "comentario_fixado": "🏕️ PARTE 2 — comenta assim:\nNOME + FUNÇÃO + A ou B\nex.: \"Lucas, pescador, B\"\nA) Muro de proteção\nB) Horta\nOs comentários mais curtidos viram moradores!"
   }
 }
