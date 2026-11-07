@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <title>E Se... renderer</title>
 <script type="importmap">
-{ "imports": { "three": "/node_modules/three/build/three.module.js" } }
+{ "imports": { "three": "/node_modules/three/build/three.module.js", "three/addons/": "/node_modules/three/examples/jsm/" } }
 </script>
 <link rel="stylesheet" href="/engine/overlay.css">
 </head>
@@ -15,7 +15,7 @@
   <div id="flash"></div>
   <div id="titlecard"><div class="kicker">E SE...</div><div class="q"></div></div>
   <div id="header"><span class="ep"></span><span class="short"></span></div>
-  <div id="counter"><div class="label"></div><div class="value"></div></div>
+  <div id="counter"><div class="label"><i class="dot"></i><span></span></div><div class="value"></div></div>
   <div id="caption"></div>
   <div id="choice">
     <div class="ask"></div>

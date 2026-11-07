@@ -3,6 +3,10 @@
 // Nada depende do quadro anterior, nem de relógio, nem de Math.random —
 // então renderizar o mesmo t duas vezes produz exatamente a mesma imagem.
 import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 
 export const W = 1080, H = 1920;
 export const EYE_HEIGHT = 1.6; // metros — a câmera é o espectador
@@ -26,26 +30,36 @@ const EASE = {
   in: k => k * k * k,
   out: k => 1 - Math.pow(1 - k, 3),
   inOut: k => (k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2),
+  back: k => { const c = 1.4; return 1 + (c + 1) * Math.pow(k - 1, 3) + c * Math.pow(k - 1, 2); },
 };
 const DEG = Math.PI / 180;
 
 // ---------- estado ----------
-let script, renderer, scene, camera, world, camKeys, events;
+let script, renderer, scene, camera, world, camKeys, events, composer, finalPass;
 const $ = s => document.querySelector(s);
 
 // ---------- câmera: um movimento por legenda ----------
-// Cada pose: { pos: [x, z] ou [x, y, z], yaw (graus), pitch (graus), fov, roll }
+// Pose: { pos: [x, z] ou [x, y, z], yaw (graus), pitch (graus), fov, roll }
+//   ou  { pos, look: [x, y, z] }  -> yaw/pitch calculados para mirar no ponto.
 // yaw 0 = olhando para -Z; yaw positivo gira para a esquerda.
+function unwrap(a, ref) { while (a - ref > 180) a -= 360; while (a - ref < -180) a += 360; return a; }
 function normPose(p, prev) {
   const base = prev || { pos: [0, EYE_HEIGHT, 0], yaw: 0, pitch: 0, fov: 70, roll: 0 };
   const out = { ...base, ...p };
+  delete out.look;
   if (p && p.pos) out.pos = p.pos.length === 2 ? [p.pos[0], EYE_HEIGHT, p.pos[1]] : p.pos.slice();
+  if (p && p.look) {
+    const dx = p.look[0] - out.pos[0], dy = p.look[1] - out.pos[1], dz = p.look[2] - out.pos[2];
+    out.yaw = Math.atan2(-dx, -dz) / DEG;
+    out.pitch = Math.atan2(dy, Math.hypot(dx, dz)) / DEG;
+  }
+  out.yaw = unwrap(out.yaw, base.yaw); // sempre gira pelo caminho mais curto
   return out;
 }
 function buildCameraKeys(s) {
-  // Lista de segmentos [t0, t1, poseA, poseB, ease, shake]
   const segs = [];
   let pose = normPose(s.camera?.start);
+  const start = pose;
   const moves = [];
   if (s.title?.camera) moves.push({ start: 0, end: s.title.duration, cam: s.title.camera });
   for (const c of s.captions) if (c.camera) moves.push({ start: c.start, end: c.end, cam: c.camera });
@@ -54,15 +68,14 @@ function buildCameraKeys(s) {
     const t0 = m.start + (m.cam.delay || 0);
     const t1 = m.cam.duration != null ? t0 + m.cam.duration : m.end;
     const to = normPose(m.cam.to, pose);
-    segs.push({ t0, t1, a: pose, b: to, ease: EASE[m.cam.ease || 'inOut'], shake: m.cam.shake ?? 0.15, sEnd: m.end });
+    segs.push({ t0, t1, a: pose, b: to, ease: EASE[m.cam.ease || 'inOut'], shake: m.cam.shake ?? 0.15 });
     pose = to;
   }
-  return { start: normPose(s.camera?.start), segs };
+  return { start, segs };
 }
 function cameraAt(t) {
   const { start, segs } = camKeys;
-  let pose = start, shake = segs.length ? segs[0].shake : 0.15;
-  let walked = 0;
+  let pose = start, shake = segs.length ? segs[0].shake : 0.15, walked = 0;
   for (const s of segs) {
     if (t >= s.t1) { pose = s.b; shake = s.shake; continue; }
     if (t >= s.t0) {
@@ -73,32 +86,50 @@ function cameraAt(t) {
         fov: lerp(s.a.fov, s.b.fov, k), roll: lerp(s.a.roll || 0, s.b.roll || 0, k),
       };
       shake = s.shake;
-      // balanço de caminhada proporcional à distância percorrida
-      const d = Math.hypot(s.b.pos[0] - s.a.pos[0], s.b.pos[2] - s.a.pos[2]);
-      walked = d * k;
+      walked = Math.hypot(s.b.pos[0] - s.a.pos[0], s.b.pos[2] - s.a.pos[2]) * k;
       break;
     }
     break; // antes do próximo movimento: segura a pose anterior
   }
-  // tremor de mão (soma de senos = determinístico)
+  // impactos (efeito "shake" no roteiro) somam tremor que decai
+  let hit = 0;
+  for (const e of script.effects || []) if (e.type === 'shake' && t >= e.t && t < e.t + e.dur) hit += (e.amp ?? 2) * Math.pow(1 - (t - e.t) / e.dur, 2);
   const n = (f, p) => Math.sin(t * f + p);
-  const sy = shake * (0.6 * n(1.3, 0.2) + 0.3 * n(2.9, 1.7) + 0.1 * n(7.1, 4.0));
-  const sp = shake * (0.6 * n(1.1, 2.1) + 0.3 * n(3.3, 0.4) + 0.1 * n(6.7, 2.2));
+  const sh = shake + hit;
+  const sy = sh * (0.6 * n(1.3, 0.2) + 0.3 * n(2.9, 1.7) + 0.1 * n(7.1, 4.0)) + hit * 0.5 * n(31, 1);
+  const sp = sh * (0.6 * n(1.1, 2.1) + 0.3 * n(3.3, 0.4) + 0.1 * n(6.7, 2.2)) + hit * 0.5 * n(37, 2);
+  const breath = 0.006 * Math.sin(t * 1.6); // respiração
   const bob = Math.sin(walked * Math.PI / 0.75) * 0.035 * clamp(walked * 4);
-  return { ...pose, pos: [pose.pos[0], pose.pos[1] + bob, pose.pos[2]], yaw: pose.yaw + sy, pitch: pose.pitch + sp };
+  return { ...pose, pos: [pose.pos[0], pose.pos[1] + bob + breath, pose.pos[2]], yaw: pose.yaw + sy, pitch: pose.pitch + sp, roll: (pose.roll || 0) + hit * 0.6 * n(23, 3) };
 }
 
 // ---------- eventos do roteiro ----------
-// ev(id) devolve o tempo do evento (ou Infinity). since(id, t) = segundos desde o evento (negativo antes).
 function makeEvents(s) {
   const map = {};
   for (const e of s.events || []) map[e.id] = e.t;
   return { at: id => (id in map ? map[id] : Infinity), since: (id, t) => t - (id in map ? map[id] : Infinity) };
 }
 
-// ---------- sobreposição 2D (título, contador, legendas, escolha) ----------
+// ---------- sobreposição 2D ----------
 function esc(s) { return s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
 function rich(s) { return esc(s).replace(/\*(.+?)\*/g, '<span class="hl">$1</span>'); }
+// quebra "texto com *destaque*" em palavras [{w, hl}]
+function words(s) {
+  const out = []; let hl = false;
+  let prevSpace = true; // o texto anterior terminou em espaço?
+  for (const part of s.split(/(\*)/)) {
+    if (part === '*') { hl = !hl; continue; }
+    if (!part) continue;
+    part.split(/(\s+)/).forEach((w, i) => {
+      if (!w || /^\s+$/.test(w)) return;
+      const glue = i === 0 && out.length > 0 && !prevSpace; // ex.: "*Redentor*," -> vírgula colada
+      out.push({ w, hl, glue });
+    });
+    prevSpace = /\s$/.test(part);
+  }
+  return out;
+}
+const wordsHTML = s => words(s).map(({ w, hl, glue }, i) => `${i && !glue ? ' ' : ''}<span class="w${hl ? ' hl' : ''}">${esc(w)}</span>`).join('');
 
 function counterAt(t) {
   const c = script.counter; if (!c) return null;
@@ -108,57 +139,64 @@ function counterAt(t) {
     if (t <= k[i][0]) {
       const u = (t - k[i - 1][0]) / (k[i][0] - k[i - 1][0]);
       const a = k[i - 1][1], b = k[i][1];
-      // crescimento exponencial entre chaves positivas (parece "contágio"), linear caso contrário
       return a > 0 && b > 0 && c.curve === 'exp' ? a * Math.pow(b / a, u) : lerp(a, b, u);
     }
   }
   return k[k.length - 1][1];
 }
 function fmtCounter(v) {
-  const c = script.counter;
   const n = Math.round(v);
-  if (c.format === 'clock') { const h = Math.floor(n / 60), m = n % 60; return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`; }
+  if (script.counter.format === 'clock') { const h = Math.floor(n / 60), m = n % 60; return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`; }
   return n.toLocaleString('pt-BR');
 }
 
-function pop(t, t0, t1, inDur = 0.18, outDur = 0.15) {
-  if (t < t0 || t >= t1) return { o: 0, s: 1 };
-  const a = clamp((t - t0) / inDur), b = clamp((t1 - t) / outDur);
-  const s = 0.82 + 0.18 * EASE.out(a) + 0.06 * Math.sin(Math.PI * a);
-  return { o: Math.min(a * 1.5, b, 1), s };
-}
-
+let capCache = null;
 function updateOverlay(t) {
   const s = script;
-  // título
   const td = s.title.duration;
+  // título com "pancada": E SE... bate na tela, a pergunta entra palavra por palavra
   const tc = $('#titlecard');
-  const tin = clamp(t / 0.35), tout = clamp((td - t) / 0.3);
-  tc.style.opacity = Math.min(tin, tout);
-  tc.style.transform = `scale(${0.9 + 0.1 * EASE.out(tin)})`;
-  // cabeçalho + contador
-  const hk = clamp((t - td) / 0.4);
+  const tout = clamp((td - t) / 0.3);
+  tc.style.opacity = tout;
+  const kick = clamp(t / 0.22);
+  const kEl = $('#titlecard .kicker');
+  kEl.style.transform = `scale(${lerp(2.2, 1, EASE.out(kick))}) rotate(${(1 - kick) * -6}deg)`;
+  kEl.style.opacity = kick;
+  const tw = tc.querySelectorAll('.q .w');
+  tw.forEach((el, i) => { const k = clamp((t - 0.25 - i * 0.06) / 0.16); el.style.opacity = k; el.style.transform = `translateY(${(1 - EASE.out(k)) * 30}px) scale(${0.85 + 0.15 * EASE.back(k)})`; });
+
   const choiceOn = s.choice && t >= s.choice.start;
+  const hk = clamp((t - td) / 0.4);
   $('#header').style.opacity = choiceOn ? 0 : hk;
+  $('#header').style.transform = `translateY(${(1 - EASE.out(hk)) * -20}px)`;
   if (s.counter) {
     const cv = counterAt(t);
-    const visible = t >= (s.counter.showAt ?? td) && !choiceOn;
-    const ck = visible ? clamp((t - (s.counter.showAt ?? td)) / 0.3) : 0;
+    const showAt = s.counter.showAt ?? td;
+    const ck = t >= showAt && !choiceOn ? clamp((t - showAt) / 0.3) : 0;
     $('#counter').style.opacity = ck;
     $('#counter .value').textContent = fmtCounter(cv);
-    // "pulso" quando o número sobe rápido
-    const pulse = 1 + 0.04 * Math.max(0, Math.sin(t * 9));
-    $('#counter .value').style.transform = `scale(${t > (s.counter.pulseFrom ?? 1e9) ? pulse : 1})`;
-    $('#counter .value').style.transformOrigin = '0 50%';
+    const pulse = t > (s.counter.pulseFrom ?? 1e9) ? 1 + 0.04 * Math.max(0, Math.sin(t * 9)) : 1;
+    $('#counter .value').style.transform = `scale(${pulse})`;
+    $('#counter .dot').style.opacity = Math.sin(t * Math.PI * 2) > 0 ? 1 : 0.25;
   }
-  // legenda ativa
+  // legenda: palavras entram uma a uma (estilo shorts)
   const cap = s.captions.find(c => t >= c.start && t < c.end);
   const el = $('#caption');
-  if (cap && !(choiceOn && cap.hideOnChoice !== false && t >= s.choice.start)) {
-    if (el.dataset.key !== String(cap.start)) { el.innerHTML = rich(cap.text); el.dataset.key = String(cap.start); }
-    const p = pop(t, cap.start, cap.end);
-    el.style.opacity = p.o; el.style.transform = `scale(${p.s})`;
+  if (cap && !(choiceOn && cap.hideOnChoice !== false)) {
+    if (capCache !== cap) {
+      capCache = cap;
+      el.innerHTML = wordsHTML(cap.text);
+    }
     el.style.top = (cap.y ?? 1180) + 'px';
+    const out = clamp((cap.end - t) / 0.15);
+    el.style.opacity = out;
+    const ws = el.querySelectorAll('.w');
+    const step = Math.min(0.09, (cap.end - cap.start) * 0.45 / Math.max(1, ws.length));
+    ws.forEach((w, i) => {
+      const k = clamp((t - cap.start - i * step) / 0.14);
+      w.style.opacity = k;
+      w.style.transform = `translateY(${(1 - EASE.out(k)) * 18}px) scale(${0.7 + 0.3 * EASE.back(k)})`;
+    });
   } else { el.style.opacity = 0; }
   // escolha A/B
   const ch = $('#choice');
@@ -171,8 +209,12 @@ function updateOverlay(t) {
       const e = ch.querySelector(sel);
       e.style.opacity = k;
       const bump = sel === '.cta' ? 1 + 0.05 * Math.max(0, Math.sin((u - d) * 6)) * clamp(u - d - 0.3) : 1;
-      e.style.transform = `scale(${(0.7 + 0.3 * EASE.out(k)) * bump})`;
+      const slide = sel.startsWith('.opt') ? `translateX(${(1 - EASE.out(k)) * (sel === '.opt.a' ? -120 : 120)}px) ` : '';
+      e.style.transform = `${slide}scale(${(0.7 + 0.3 * EASE.back(k)) * bump})`;
     }
+    // "A" e "B" pulsam alternadamente
+    ch.querySelector('.opt.a').style.boxShadow = `0 0 ${20 + 40 * Math.max(0, Math.sin(u * 4))}px rgba(255,60,60,.8)`;
+    ch.querySelector('.opt.b').style.boxShadow = `0 0 ${20 + 40 * Math.max(0, Math.sin(u * 4 + Math.PI))}px rgba(60,255,120,.7)`;
   } else ch.style.opacity = 0;
   // flash
   let f = 0;
@@ -183,10 +225,10 @@ function updateOverlay(t) {
 function fillStatic() {
   const s = script;
   $('#titlecard .kicker').textContent = s.title.kicker || 'E SE...';
-  $('#titlecard .q').innerHTML = rich(s.title.text);
+  $('#titlecard .q').innerHTML = wordsHTML(s.title.text);
   $('#header .ep').textContent = s.episode?.label || '';
   $('#header .short').textContent = s.title.short || '';
-  if (s.counter) $('#counter .label').textContent = s.counter.label;
+  if (s.counter) $('#counter .label span').textContent = s.counter.label;
   if (s.choice) {
     $('#choice .ask').textContent = s.choice.ask || 'O QUE VOCÊ FAZ?';
     $('#choice .opt.a .txt').textContent = s.choice.a;
@@ -196,12 +238,59 @@ function fillStatic() {
   }
 }
 
+// ---------- pós-processamento ----------
+// Um único passe final (mais barato no Chrome sem GPU): tone mapping ACES + sRGB + FXAA + cor + vinheta + grão.
+const FinalShader = {
+  uniforms: { tDiffuse: { value: null }, uTime: { value: 0 }, uTension: { value: 0 }, uExposure: { value: 1 }, uTexel: { value: new THREE.Vector2(1 / W, 1 / H) }, uRes: { value: new THREE.Vector2(W, H) } },
+  vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.); }`,
+  fragmentShader: `
+    uniform sampler2D tDiffuse; uniform float uTime, uTension, uExposure; uniform vec2 uTexel, uRes; varying vec2 vUv;
+    vec3 acesFit(vec3 v){ vec3 a = v*(v+0.0245786)-0.000090537; vec3 b = v*(0.983729*v+0.4329510)+0.238081; return a/b; }
+    vec3 toneMap(vec3 c){
+      const mat3 I = mat3(vec3(0.59719,0.07600,0.02840), vec3(0.35458,0.90834,0.13383), vec3(0.04823,0.01566,0.83777));
+      const mat3 O = mat3(vec3(1.60475,-0.10208,-0.00327), vec3(-0.53108,1.10813,-0.07276), vec3(-0.07367,-0.00605,1.07602));
+      c = clamp(O * acesFit(I * (c * uExposure / 0.6)), 0.0, 1.0);
+      return mix(c * 12.92, 1.055 * pow(c, vec3(1.0/2.4)) - 0.055, step(0.0031308, c)); // sRGB
+    }
+    vec3 T(vec2 uv){ return toneMap(texture2D(tDiffuse, uv).rgb); }
+    float luma(vec3 c){ return dot(c, vec3(0.299,0.587,0.114)); }
+    float h(vec2 p){ return fract(sin(dot(p, vec2(12.9898,78.233))) * 43758.5453); }
+    void main(){
+      // FXAA simplificado (5 amostras)
+      vec3 cM = T(vUv);
+      float lM = luma(cM);
+      float lNW = luma(T(vUv + uTexel*vec2(-1.,-1.))), lNE = luma(T(vUv + uTexel*vec2(1.,-1.)));
+      float lSW = luma(T(vUv + uTexel*vec2(-1.,1.))),  lSE = luma(T(vUv + uTexel*vec2(1.,1.)));
+      float lMin = min(lM, min(min(lNW,lNE), min(lSW,lSE))), lMax = max(lM, max(max(lNW,lNE), max(lSW,lSE)));
+      vec3 c = cM;
+      if (lMax - lMin > max(0.04, lMax * 0.1)) {
+        vec2 dir = vec2(-((lNW + lNE) - (lSW + lSE)), ((lNW + lSW) - (lNE + lSE)));
+        float rcp = 1.0 / (min(abs(dir.x), abs(dir.y)) + max((lNW+lNE+lSW+lSE)*0.03125, 0.0078125));
+        dir = clamp(dir * rcp, -8.0, 8.0) * uTexel;
+        c = 0.5 * (T(vUv + dir * (1.0/3.0 - 0.5)) + T(vUv + dir * (2.0/3.0 - 0.5)));
+      }
+      // cor: contraste + sombras azuladas / altas quentes
+      float l = luma(c);
+      c = mix(vec3(l), c, 1.12);
+      c = (c - 0.5) * 1.08 + 0.5;
+      c += vec3(-0.012, 0.0, 0.025) * (1.0 - l) + vec3(0.02, 0.008, -0.015) * l;
+      // vinheta (fecha e avermelha com a tensão)
+      vec2 d = vUv - 0.5;
+      float v = smoothstep(0.85, 0.25, length(d * vec2(0.9, 1.1)));
+      c *= mix(0.55, 1.0, v);
+      c = mix(c, c * vec3(1.15, 0.75, 0.75), (1.0 - v) * uTension * 0.6);
+      // grão determinístico (semente = tempo)
+      c += (h(vUv * uRes + fract(uTime * 7.123) * 100.0) - 0.5) * 0.035;
+      gl_FragColor = vec4(c, 1.0);
+    }`,
+};
+
 // ---------- API pública chamada pelo Playwright ----------
 window.loadScript = async (s) => {
   script = s;
   events = makeEvents(s);
   camKeys = buildCameraKeys(s);
-  renderer = new THREE.WebGLRenderer({ canvas: $('#gl'), antialias: true, preserveDrawingBuffer: true, powerPreference: 'high-performance' });
+  renderer = new THREE.WebGLRenderer({ canvas: $('#gl'), antialias: true, preserveDrawingBuffer: true, logarithmicDepthBuffer: s.post_fx?.logDepth ?? false, powerPreference: 'high-performance' });
   renderer.setPixelRatio(1);
   renderer.setSize(W, H, false);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -210,7 +299,7 @@ window.loadScript = async (s) => {
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFShadowMap;
   scene = new THREE.Scene();
-  camera = new THREE.PerspectiveCamera(70, W / H, 0.05, 60000);
+  camera = new THREE.PerspectiveCamera(70, W / H, 0.1, 80000);
   camera.rotation.order = 'YXZ';
   scene.add(camera);
   await document.fonts.load('900 60px Montserrat');
@@ -218,11 +307,24 @@ window.loadScript = async (s) => {
   await document.fonts.load('60px Anton');
   await document.fonts.ready;
   const mod = await import(`./scenes/${s.scene}.js`);
+  window.__three = { scene: null, renderer: null };
   world = await mod.build({ THREE, renderer, scene, camera, script: s, events, helpers: { rng, clamp, lerp, smooth, W, H } });
   fillStatic();
+  window.__three = { scene, renderer }; // depuração
+
+  const post = s.post_fx || {};
+  const rt = new THREE.WebGLRenderTarget(W, H, { type: THREE.HalfFloatType, samples: post.msaa ?? 0 });
+  composer = new EffectComposer(renderer, rt);
+  composer.setPixelRatio(1);
+  composer.setSize(W, H);
+  composer.addPass(new RenderPass(scene, camera));
+  if ((post.bloom ?? 0.55) > 0) composer.addPass(new UnrealBloomPass(new THREE.Vector2(W / 3, H / 3), post.bloom ?? 0.55, 0.6, post.bloomThreshold ?? 0.82));
+  finalPass = new ShaderPass(FinalShader);
+  composer.addPass(finalPass);
+
   // pré-compila todos os shaders (com tudo visível) para que nenhum quadro dependa de outro
   renderer.compile(scene, camera);
-  renderer.render(scene, camera);
+  composer.render();
   return { duration: s.duration, fps: s.fps };
 };
 
@@ -233,7 +335,10 @@ window.renderFrame = (t) => {
   if (camera.fov !== c.fov) { camera.fov = c.fov; camera.updateProjectionMatrix(); }
   camera.updateMatrixWorld(true);
   world.update(t, { camera, pose: c });
-  renderer.render(scene, camera);
+  finalPass.uniforms.uTime.value = t;
+  finalPass.uniforms.uTension.value = world.tension ? world.tension(t) : 0;
+  finalPass.uniforms.uExposure.value = renderer.toneMappingExposure;
+  composer.render();
   updateOverlay(t);
   return true;
 };

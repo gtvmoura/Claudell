@@ -195,6 +195,29 @@ const SOUNDS = {
     }
     return reverb(L, 0.35, 1.2);
   },
+  // helicóptero se aproximando e circulando (pás + turbina)
+  helicoptero(len = 34) {
+    const r = rng(23), L = new Float32Array(len * SR), lp = biquad('lp', 900), lp2 = biquad('lp', 160);
+    let ph = 0;
+    for (let n = 0; n < L.length; n++) {
+      const t = n / SR, near = Math.min(1, t / 7) ** 2, orbit = 0.75 + 0.25 * Math.sin(TAU * t / 30);
+      const rate = 17 + 0.6 * Math.sin(TAU * t / 30); ph += rate / SR;
+      const slap = Math.exp(-((ph % 1) * 18)) * (r() * 2 - 1);
+      const whine = Math.sin(TAU * 1350 * t) * 0.03 + Math.sin(TAU * 2710 * t) * 0.012;
+      L[n] = (lp(slap) * 2.2 + lp2(r() * 2 - 1) * 0.8 * near + whine * near) * (0.15 + 0.85 * near) * orbit * env(t, 0.5, 2, len);
+    }
+    return L;
+  },
+  // explosão distante (estrondo grave + estalos)
+  explosao(len = 5) {
+    const r = rng(29), L = new Float32Array(len * SR), lp = biquad('lp', 260), lp2 = biquad('lp', 90); let ph = 0;
+    for (let n = 0; n < L.length; n++) {
+      const t = n / SR; ph += TAU * (32 + 50 * Math.exp(-t * 4)) / SR;
+      const crack = r() < 0.0009 * Math.exp(-t) ? (r() * 2 - 1) * 2 : 0;
+      L[n] = lp(r() * 2 - 1) * 2.2 * Math.exp(-t * 1.1) + Math.sin(ph) * Math.exp(-t * 1.5) * 0.9 + lp2(r() * 2 - 1) * Math.exp(-t * 0.5) * 1.2 + crack;
+    }
+    return reverb(L, 0.4, 1.6);
+  },
 };
 
 function writeWav(file, L) {

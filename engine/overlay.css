@@ -6,7 +6,7 @@ html, body { margin: 0; padding: 0; background: #000; overflow: hidden; }
 #stage { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: #000; font-family: "Montserrat", sans-serif; }
 #gl { position: absolute; inset: 0; width: 1080px; height: 1920px; display: block; }
 #vignette { position: absolute; inset: 0; pointer-events: none;
-  background: radial-gradient(ellipse 75% 60% at 50% 48%, rgba(0,0,0,0) 55%, rgba(0,0,0,.55) 100%); }
+  background: linear-gradient(180deg, rgba(0,0,0,.45) 0%, rgba(0,0,0,0) 16%, rgba(0,0,0,0) 80%, rgba(0,0,0,.35) 100%); }
 #flash { position: absolute; inset: 0; opacity: 0; background: #ff2a2a; mix-blend-mode: screen; }
 
 /* Cartão de título (pergunta completa) */
@@ -34,6 +34,9 @@ html, body { margin: 0; padding: 0; background: #000; overflow: hidden; }
   font-weight: 900; font-size: 66px; line-height: 1.16; color: #fff;
   -webkit-text-stroke: 4px #000; paint-order: stroke fill; text-shadow: 0 6px 20px rgba(0,0,0,.95); opacity: 0; }
 #caption .hl, #titlecard .hl { color: #ffd400; }
+#caption .w, #titlecard .w { display: inline-block; will-change: transform; }
+#counter .dot { display: inline-block; width: 18px; height: 18px; border-radius: 50%; background: #ff3b30; margin-right: 12px; vertical-align: 1px; box-shadow: 0 0 12px #ff3b30; }
+#header .ep { box-shadow: 0 4px 0 #000; }
 
 /* Cartão de escolha A/B */
 #choice { position: absolute; inset: 0; opacity: 0; background: rgba(0,0,0,.55); }

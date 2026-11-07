@@ -10,6 +10,7 @@
 //   --workers N      páginas do Chrome em paralelo (padrão 2)
 //   --stills a,b,c   também salva PNGs nestes tempos (s) em out/stills/
 //   --keep           não apaga a pasta de quadros
+//   --png            quadros em PNG sem perdas (mais lento; padrão: JPEG qualidade 95)
 import fs from 'node:fs';
 import path from 'node:path';
 import http from 'node:http';
@@ -38,6 +39,7 @@ const out = path.resolve(opt('out', path.join('out', name + '.mp4')));
 const framesDir = path.join(ROOT, 'frames', path.basename(out, '.mp4'));
 const stills = (opt('stills', '') || '').split(',').filter(Boolean).map(Number);
 const N = Math.round(duration * FPS);
+const PNG = argv.includes('--png');
 
 function validate(s) {
   const err = m => { throw new Error('script.json inválido: ' + m); };
@@ -81,7 +83,7 @@ async function worker(w) {
   for (let i = w; i < N; i += workers) {
     const t = start + i / FPS;
     await page.evaluate(t => window.renderFrame(t), t);
-    await page.screenshot({ path: path.join(framesDir, `f_${String(i).padStart(5, '0')}.png`), type: 'png' });
+    await page.screenshot(PNG ? { path: path.join(framesDir, `f_${String(i).padStart(5, '0')}.png`), type: 'png' } : { path: path.join(framesDir, `f_${String(i).padStart(5, '0')}.jpg`), type: 'jpeg', quality: 95 });
     done++;
     if (done % 30 === 0 || done === N) {
       const el = (Date.now() - t0) / 1000;
@@ -127,7 +129,7 @@ if (sounds.length) {
 }
 
 // ---------- vídeo final ----------
-ff(['-framerate', String(FPS), '-i', path.join(framesDir, 'f_%05d.png'), '-i', mix,
+ff(['-framerate', String(FPS), '-i', path.join(framesDir, PNG ? 'f_%05d.png' : 'f_%05d.jpg'), '-i', mix,
   '-c:v', 'libx264', '-preset', 'medium', '-crf', '18', '-pix_fmt', 'yuv420p', '-r', String(FPS),
   '-c:a', 'aac', '-b:a', '192k', '-shortest', '-movflags', '+faststart', out]);
 if (!argv.includes('--keep')) fs.rmSync(framesDir, { recursive: true, force: true });
