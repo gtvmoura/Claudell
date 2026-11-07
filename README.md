@@ -1,6 +1,6 @@
 # E Se... — shorts 3D em primeira pessoa
 
-Série de shorts **"E Se..."** em 3D: vertical **1080×1920**, **30 fps**, **≥ 61 s**, câmera em **primeira pessoa** na altura dos olhos (**1,6 m**).
+Canal **@esefossevoceai** (TikTok) — várias minisséries **"E Se..."** em 3D: vertical **1080×1920**, **30 fps**, **≥ 61 s**, câmera em **primeira pessoa** na altura dos olhos (**1,6 m**).
 
 Série atual: **"E se um apocalipse zumbi começasse e você estivesse no Cristo Redentor?"** — cada episódio termina com uma escolha **A ou B**; a mais votada nos comentários decide o episódio seguinte (veja `series.json`).
 
