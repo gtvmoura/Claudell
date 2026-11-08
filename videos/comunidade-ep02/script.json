@@ -435,7 +435,7 @@
       "start": 50,
       "end": 55,
       "text": "Mas 160 pessoas *comem muito*. A comida acaba em 3 dias.",
-      "fala": "Mas cento e sessenta pessoas comem muito. Comida pra três dias.",
+      "fala": "Cento e sessenta pessoas comem muito. Comida pra três dias.",
       "camera": {
         "to": {
           "pos": [
@@ -1680,11 +1680,10 @@
   ],
   "narracao": {
     "voz": "cadu",
-    "velocidade": 1.2,
+    "velocidade": 1.05,
     "vol": 1.0,
     "atraso": 0.15,
-    "efeito": "cinema",
-    "tom": 0.89,
+    "efeito": "natural",
     "pronuncia": {
       "@esefossevoceai": "É Se Fosse Você Aí"
     },
@@ -1695,7 +1694,7 @@
         "fala": "Caçar à noite, ou plantar e racionar? Comenta A ou B."
       }
     ],
-    "pausa": 0.12
+    "pausa": 0.2
   },
   "sounds": [
     {
