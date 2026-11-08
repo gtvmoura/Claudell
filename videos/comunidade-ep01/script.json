@@ -240,7 +240,7 @@
     {
       "start": 17,
       "end": 20.5,
-      "text": "“Achei. *É aqui.*”",
+      "text": "Água limpa, espaço aberto… *o lugar perfeito.*",
       "camera": {
         "to": {
           "pos": [
@@ -263,7 +263,7 @@
     {
       "start": 20.5,
       "end": 24,
-      "text": "“Eu vou fundar uma *comunidade*.”",
+      "text": "Ali, ele decide fundar uma *comunidade*.",
       "camera": {
         "to": {
           "pos": [
@@ -286,7 +286,7 @@
     {
       "start": 24,
       "end": 28.5,
-      "text": "“E cada *seguidor* vai virar uma pessoa aqui.”",
+      "text": "E cada *seguidor* do canal vai virar um morador.",
       "camera": {
         "to": {
           "pos": [
@@ -309,7 +309,7 @@
     {
       "start": 28.5,
       "end": 33,
-      "text": "“Com *nome*, rosto e uma *função*.”",
+      "text": "Com *nome*, rosto e uma *função* lá dentro.",
       "camera": {
         "to": {
           "pos": [
