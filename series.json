@@ -38,7 +38,42 @@
           "script": "videos/comunidade-ep01/script.json",
           "status": "pronto"
         }
-      ]
+      ],
+      "regras": [
+        "Quem comenta pedindo pra entrar vira morador. Quem disse a função ganha essa função; quem não disse vira 'Morador'.",
+        "Todo episódio termina com um dilema A/B que decide o próximo.",
+        "A comunidade cresce e o crescimento tem consequências (comida, água, barulho, brigas, atrair zumbis/saqueadores).",
+        "A placa POP. e o contador de moradores sobem a cada episódio."
+      ],
+      "parte1": {
+        "status": "publicado",
+        "votacao": {
+          "A (paliçada)": null,
+          "B (torre + armadilhas)": null
+        },
+        "pedidos": [
+          {
+            "nome": "maranhense",
+            "funcao": "Caçador"
+          },
+          {
+            "nome": "Huskyzinha (Yuki)",
+            "funcao": "Caçadora"
+          },
+          {
+            "nome": "Alex",
+            "funcao": "Caçador"
+          },
+          {
+            "nome": "Rizu",
+            "funcao": "Morador"
+          },
+          {
+            "nome": "Lc",
+            "funcao": "Morador"
+          }
+        ]
+      }
     }
   ]
 }
