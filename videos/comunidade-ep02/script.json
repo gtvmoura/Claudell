@@ -32,7 +32,7 @@
       1
     ],
     [
-      31.8,
+      13.6,
       160
     ]
   ],
@@ -87,11 +87,11 @@
         1
       ],
       [
-        29.4,
+        9.3,
         1
       ],
       [
-        31.8,
+        13.6,
         160
       ],
       [
@@ -99,7 +99,7 @@
         160
       ]
     ],
-    "pulseFrom": 29.4
+    "pulseFrom": 9.3
   },
   "medidor": {
     "label": "Comida",
@@ -239,8 +239,8 @@
     {
       "start": 9,
       "end": 14,
-      "text": "Vocês responderam: *cada comentário virou um morador.*",
-      "fala": "Vocês responderam. Cada comentário virou um morador.",
+      "text": "Vocês responderam: *160 moradores!*",
+      "fala": "Vocês responderam. Cento e sessenta moradores!",
       "camera": {
         "to": {
           "pos": [
@@ -338,8 +338,8 @@
     {
       "start": 29,
       "end": 34,
-      "text": "Já somos *160 moradores*. E 47 com uma função.",
-      "fala": "Já somos cento e sessenta. Quarenta e sete com uma função.",
+      "text": "Cada um com *seu trabalho* na comunidade.",
+      "fala": "E cada um com seu trabalho na comunidade.",
       "camera": {
         "to": {
           "pos": [
