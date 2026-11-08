@@ -245,7 +245,6 @@ function updateOverlay(t) {
     for (const [sel, d] of [['.cta', 1.6], ['.sub', 2.0]]) { const k = clamp((u - d) / 0.3); const e = ec.querySelector(sel); e.style.opacity = k; e.style.transform = `scale(${(0.8 + 0.2 * EASE.back(k)) * (sel === '.cta' ? 1 + 0.04 * Math.max(0, Math.sin((u - d) * 6)) * clamp(u - d - 0.3) : 1)})`; }
   } else ec.style.opacity = 0;
   // etiquetas presas aos personagens (posição 3D -> tela)
-  updateLabels(t, choiceOn);
   // flash
   let f = 0;
   for (const e of s.effects || []) if (e.type === 'flash' && t >= e.t && t < e.t + e.dur) f = Math.max(f, (1 - (t - e.t) / e.dur) * (e.strength ?? 0.6));
@@ -276,12 +275,18 @@ function drawTag(g, L) {
   if (vaga) g.setLineDash([10, 7]); rrect(g, -wN / 2, y, wN, hN, 14); g.stroke(); g.setLineDash([]);
   g.fillStyle = '#ffffff'; g.font = '900 34px Montserrat'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(L.text, 0, y + hN / 2 + 2);
 }
+// As etiquetas são desenhadas num canvas FORA da página e entram na imagem pelo passe final do WebGL.
+// Assim não dependem da composição de camadas do navegador (que às vezes mostrava a camada antiga).
+const labelCanvas = document.createElement("canvas"); labelCanvas.width = W; labelCanvas.height = H;
+// canvas em memória comum (sem cópia na placa de vídeo): zerar sempre zera de verdade
+const labelCtx = labelCanvas.getContext("2d", { willReadFrequently: true });
+let labelTex = null;
 function updateLabels(t, hideAll) {
   const cap = script.captions.find(c => t >= c.start && t < c.end);
   const capOn = !!cap, capTop = cap ? (cap.y ?? 1180) : 0;
-  const cv = $('#labels');
-  cv.width = W; // zera e invalida o canvas a cada quadro: a limpeza SEMPRE chega à tela
-  const g = cv.getContext('2d');
+  const cv = labelCanvas;
+  const g = labelCtx;
+  g.setTransform(1, 0, 0, 1, 0, 0); g.globalAlpha = 1; g.clearRect(0, 0, W, H); // zera o canvas a cada quadro
   const list = (!hideAll && world.labels) ? world.labels(t) : [];
   const items = [];
   for (const L of list) {
@@ -331,10 +336,10 @@ function fillStatic() {
 // ---------- pós-processamento ----------
 // Um único passe final (mais barato no Chrome sem GPU): tone mapping ACES + sRGB + FXAA + cor + vinheta + grão.
 const FinalShader = {
-  uniforms: { tDiffuse: { value: null }, uTime: { value: 0 }, uTension: { value: 0 }, uExposure: { value: 1 }, uTexel: { value: new THREE.Vector2(1 / W, 1 / H) }, uRes: { value: new THREE.Vector2(W, H) } },
+  uniforms: { tDiffuse: { value: null }, tLabels: { value: null }, uTime: { value: 0 }, uTension: { value: 0 }, uExposure: { value: 1 }, uTexel: { value: new THREE.Vector2(1 / W, 1 / H) }, uRes: { value: new THREE.Vector2(W, H) } },
   vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.); }`,
   fragmentShader: `
-    uniform sampler2D tDiffuse; uniform float uTime, uTension, uExposure; uniform vec2 uTexel, uRes; varying vec2 vUv;
+    uniform sampler2D tDiffuse, tLabels; uniform float uTime, uTension, uExposure; uniform vec2 uTexel, uRes; varying vec2 vUv;
     vec3 acesFit(vec3 v){ vec3 a = v*(v+0.0245786)-0.000090537; vec3 b = v*(0.983729*v+0.4329510)+0.238081; return a/b; }
     vec3 toneMap(vec3 c){
       const mat3 I = mat3(vec3(0.59719,0.07600,0.02840), vec3(0.35458,0.90834,0.13383), vec3(0.04823,0.01566,0.83777));
@@ -371,6 +376,8 @@ const FinalShader = {
       c = mix(c, c * vec3(1.15, 0.75, 0.75), (1.0 - v) * uTension * 0.6);
       // grão determinístico (semente = tempo)
       c += (h(vUv * uRes + fract(uTime * 7.123) * 100.0) - 0.5) * 0.035;
+      vec4 lab = texture2D(tLabels, vUv); // etiquetas (canvas 2D, sRGB, alfa não pré-multiplicado)
+      c = mix(c, lab.rgb, lab.a);
       gl_FragColor = vec4(c, 1.0);
     }`,
 };
@@ -401,9 +408,9 @@ window.loadScript = async (s) => {
   world = await mod.build({ THREE, renderer, scene, camera, script: s, events, helpers: { rng, clamp, lerp, smooth, W, H } });
   fillStatic();
   { // aquece o canvas das etiquetas (fontes/glifos) para o 1º quadro sair igual aos demais
-    const cv = $('#labels'), g = cv.getContext('2d');
+    const g = labelCtx;
     for (const kind of ['', 'vaga']) for (const sc of [0.72, 1.05]) { g.setTransform(sc, 0, 0, sc, 540, 960); g.globalAlpha = 0.5; drawTag(g, { text: '@ÁÉÍÓÚÃÕÇ áéíóúãõç 0123456789', sub: 'Função · ÂÊÔ nº', kind }); }
-    cv.width = W;
+    g.setTransform(1, 0, 0, 1, 0, 0); g.globalAlpha = 1; g.clearRect(0, 0, W, H);
   }
   window.__three = { scene, renderer }; // depuração
 
@@ -415,6 +422,8 @@ window.loadScript = async (s) => {
   composer.addPass(new RenderPass(scene, camera));
   if ((post.bloom ?? 0.55) > 0) composer.addPass(bloomPass = new UnrealBloomPass(new THREE.Vector2(W / 3, H / 3), post.bloom ?? 0.55, 0.6, post.bloomThreshold ?? 0.82));
   finalPass = new ShaderPass(FinalShader);
+  labelTex = new THREE.CanvasTexture(labelCanvas); labelTex.colorSpace = THREE.NoColorSpace; labelTex.generateMipmaps = false; labelTex.minFilter = labelTex.magFilter = THREE.LinearFilter;
+  finalPass.uniforms.tLabels.value = labelTex;
   composer.addPass(finalPass);
 
   // pré-compila todos os shaders (com tudo visível) para que nenhum quadro dependa de outro
@@ -438,6 +447,8 @@ window.renderFrame = (t) => {
   finalPass.uniforms.uTime.value = t;
   finalPass.uniforms.uTension.value = world.tension ? world.tension(t) : 0;
   finalPass.uniforms.uExposure.value = renderer.toneMappingExposure;
+  const choiceOn = (script.choice && t >= script.choice.start) || (script.endcard && t >= script.endcard.start);
+  updateLabels(t, choiceOn); labelTex.needsUpdate = true;
   composer.render();
   updateOverlay(t);
   return true;
