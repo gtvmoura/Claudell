@@ -85,3 +85,12 @@ html, body { margin: 0; padding: 0; background: #000; overflow: hidden; }
 #meter .bar { margin-top: 8px; height: 26px; border-radius: 13px; background: rgba(0,0,0,.55); border: 3px solid #fff; overflow: hidden; }
 #meter .bar i { display: block; height: 100%; background: linear-gradient(90deg, #e74c3c, #f1c40f); }
 #meter .txt { margin-top: 6px; font-family: "Anton"; font-size: 46px; color: #ffd400; -webkit-text-stroke: 2px #000; paint-order: stroke fill; }
+
+/* Card de comentário (estilo TikTok): mostra o comentário que deu vida ao personagem */
+#comment { position: absolute; left: 70px; right: 70px; top: 430px; display: flex; align-items: flex-start; gap: 22px; padding: 26px 30px; border-radius: 28px;
+  background: rgba(255,255,255,.97); box-shadow: 0 16px 40px rgba(0,0,0,.45); opacity: 0; z-index: 3; transform-origin: 50% 0; }
+#comment .av { flex: 0 0 auto; width: 92px; height: 92px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: "Anton"; font-size: 50px; color: #fff; }
+#comment .body { flex: 1; }
+#comment .user { font-weight: 800; font-size: 32px; color: #8a8a8a; }
+#comment .txt { margin-top: 6px; font-weight: 800; font-size: 42px; line-height: 1.18; color: #161616; }
+#comment .heart { flex: 0 0 auto; font-size: 44px; color: #fe2c55; margin-top: 20px; }

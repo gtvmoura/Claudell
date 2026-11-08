@@ -10,7 +10,7 @@
   "height": 1920,
   "fps": 30,
   "duration": 70,
-  "populacao": 47,
+  "populacao": 160,
   "maxEtiquetas": 10,
   "construido": [
     "palicada",
@@ -22,8 +22,8 @@
   ],
   "obras": {
     "palicada": [
-      17.5,
-      34
+      34,
+      41.5
     ]
   },
   "bandeira": [
@@ -32,8 +32,8 @@
       1
     ],
     [
-      26.5,
-      47
+      31.8,
+      160
     ]
   ],
   "title": {
@@ -41,7 +41,7 @@
     "text": "os *seguidores* chegaram.",
     "short": "A Comunidade",
     "duration": 3.0,
-    "fala": "Parte dois: os seguidores chegaram.",
+    "fala": "Parte dois.",
     "camera": {
       "to": {
         "pos": [
@@ -79,6 +79,7 @@
   "counter": {
     "label": "Moradores",
     "format": "number",
+    "curve": "exp",
     "showAt": 3,
     "keys": [
       [
@@ -86,43 +87,44 @@
         1
       ],
       [
-        8.5,
+        29.4,
         1
       ],
       [
-        26.5,
-        47
+        31.8,
+        160
       ],
       [
         70,
-        47
+        160
       ]
-    ]
+    ],
+    "pulseFrom": 29.4
   },
   "medidor": {
     "label": "Comida",
-    "showAt": 48,
+    "showAt": 50,
     "keys": [
       [
-        48,
+        50,
         1
       ],
       [
-        53.5,
+        55.5,
         0.3
       ]
     ],
     "textos": [
       [
-        48,
+        50,
         "10 dias"
       ],
       [
-        50,
+        52,
         "6 dias"
       ],
       [
-        52,
+        54,
         "3 dias"
       ]
     ]
@@ -130,7 +132,7 @@
   "fundador": {
     "nome": "@esefossevoceai",
     "funcao": "Fundador",
-    "etiquetaAte": 36,
+    "etiquetaAte": 8.6,
     "trajeto": [
       [
         0,
@@ -138,32 +140,32 @@
         2.6
       ],
       [
-        6,
+        9,
         0.6,
         2.6
       ],
       [
-        9,
+        11,
         0.8,
-        11.5
+        9.5
       ],
       [
-        16,
+        29,
         0.8,
-        11.5
+        9.5
       ],
       [
-        19,
+        31,
         1.2,
         3.6
       ],
       [
-        37,
+        45,
         1.2,
         3.6
       ],
       [
-        40,
+        47,
         0.6,
         11.8
       ]
@@ -174,23 +176,19 @@
         "parado"
       ],
       [
-        9,
+        11,
         "acenar"
       ],
       [
-        14,
+        15,
         "parado"
       ],
       [
-        19,
+        31,
         "apontar"
       ],
       [
-        23,
-        "parado"
-      ],
-      [
-        40,
+        35,
         "parado"
       ]
     ],
@@ -200,19 +198,15 @@
         0
       ],
       [
-        9,
+        11,
         0
       ],
       [
-        19,
+        31,
         -40
       ],
       [
-        23,
-        0
-      ],
-      [
-        40,
+        35,
         0
       ]
     ]
@@ -220,8 +214,9 @@
   "captions": [
     {
       "start": 3,
-      "end": 7,
-      "text": "Ontem, ele estava *sozinho*. Cercado pela floresta.",
+      "end": 9,
+      "text": "Na Parte 1, um sobrevivente fundou uma comunidade… e *pediu ajuda a vocês.*",
+      "fala": "Na parte um, um sobrevivente fundou uma comunidade no meio da floresta… e pediu ajuda a vocês.",
       "camera": {
         "to": {
           "pos": [
@@ -239,36 +234,13 @@
         "ease": "inOut",
         "shake": 0.04,
         "duration": 3.0
-      },
-      "fala": "Ontem, ele estava sozinho."
-    },
-    {
-      "start": 7,
-      "end": 12,
-      "text": "Mas hoje de manhã… *alguém apareceu na trilha.*",
-      "camera": {
-        "to": {
-          "pos": [
-            5,
-            4.6,
-            22
-          ],
-          "look": [
-            1.5,
-            1.2,
-            30
-          ],
-          "fov": 50
-        },
-        "ease": "inOut",
-        "shake": 0.04,
-        "duration": 3.0
       }
     },
     {
-      "start": 12,
-      "end": 17,
-      "text": "Depois outro. E outro. *46 sobreviventes.*",
+      "start": 9,
+      "end": 14,
+      "text": "Vocês responderam: *cada comentário virou um morador.*",
+      "fala": "Vocês responderam. Cada comentário virou um morador.",
       "camera": {
         "to": {
           "pos": [
@@ -279,26 +251,125 @@
           "look": [
             0.5,
             0.5,
-            15
+            17
           ],
           "fov": 58
         },
         "ease": "inOut",
         "shake": 0.04,
-        "duration": 4.0
-      },
-      "fala": "Depois outro. E outro. Quarenta e seis!"
+        "duration": 3.0
+      }
     },
     {
-      "start": 17,
-      "end": 22,
-      "text": "Vocês votaram: *paliçada de troncos.*",
+      "start": 14,
+      "end": 19,
+      "text": "A *Yuki* pediu pra ser caçadora… e virou.",
+      "fala": "A Yuki pediu pra ser caçadora… e virou.",
+      "y": 1500,
+      "camera": {
+        "to": {
+          "pos": [
+            -6.7,
+            1.5,
+            9.1
+          ],
+          "look": [
+            -3.5,
+            1.55,
+            8.5
+          ],
+          "fov": 46
+        },
+        "ease": "inOut",
+        "shake": 0.04,
+        "duration": 2.6
+      }
+    },
+    {
+      "start": 19,
+      "end": 24,
+      "text": "O *Ruhan*, ex-militar, virou o armeiro.",
+      "fala": "O Ruhan, ex-militar, virou o armeiro.",
+      "y": 1500,
+      "camera": {
+        "to": {
+          "pos": [
+            3.3,
+            1.5,
+            12.2
+          ],
+          "look": [
+            4.5,
+            1.55,
+            9.0
+          ],
+          "fov": 46
+        },
+        "ease": "inOut",
+        "shake": 0.04,
+        "duration": 2.6
+      }
+    },
+    {
+      "start": 24,
+      "end": 29,
+      "text": "E a *Anna* é a nossa master chef.",
+      "fala": "E a Anna é a nossa master chef.",
+      "y": 1500,
+      "camera": {
+        "to": {
+          "pos": [
+            0.87,
+            1.5,
+            -2.07
+          ],
+          "look": [
+            -2.03,
+            1.55,
+            -0.57
+          ],
+          "fov": 46
+        },
+        "ease": "inOut",
+        "shake": 0.04,
+        "duration": 2.6
+      }
+    },
+    {
+      "start": 29,
+      "end": 34,
+      "text": "Já somos *160 moradores*. E 47 com uma função.",
+      "fala": "Já somos cento e sessenta. Quarenta e sete com uma função.",
+      "camera": {
+        "to": {
+          "pos": [
+            0,
+            30,
+            24
+          ],
+          "look": [
+            0,
+            0,
+            1
+          ],
+          "fov": 60
+        },
+        "ease": "inOut",
+        "shake": 0.04,
+        "duration": 3.0
+      }
+    },
+    {
+      "start": 34,
+      "end": 39,
+      "text": "Vocês escolheram: *paliçada de troncos.*",
+      "fala": "Vocês escolheram a paliçada de troncos.",
       "camera": {
         "to": {
           "pos": [
             0,
             27,
-            26
+            25
           ],
           "look": [
             0,
@@ -309,13 +380,14 @@
         },
         "ease": "inOut",
         "shake": 0.04,
-        "duration": 3.5
+        "duration": 4.0
       }
     },
     {
-      "start": 22,
-      "end": 27,
-      "text": "Os lenhadores derrubam árvores. Os *construtores* levantam o muro.",
+      "start": 39,
+      "end": 44,
+      "text": "Em um dia, *o muro estava de pé.*",
+      "fala": "Em um dia, o muro estava de pé.",
       "camera": {
         "to": {
           "pos": [
@@ -332,83 +404,14 @@
         },
         "ease": "inOut",
         "shake": 0.04,
-        "duration": 2.8
-      },
-      "fala": "Lenhadores derrubam árvores. Construtores levantam o muro."
-    },
-    {
-      "start": 27,
-      "end": 32,
-      "text": "Os *caçadores* se preparam. Os cozinheiros acendem o fogo.",
-      "camera": {
-        "to": {
-          "pos": [
-            -1.5,
-            3.4,
-            5.5
-          ],
-          "look": [
-            -4.2,
-            1.1,
-            -4.5
-          ],
-          "fov": 58
-        },
-        "ease": "inOut",
-        "shake": 0.04,
-        "duration": 2.8
+        "duration": 2.6
       }
     },
     {
-      "start": 32,
-      "end": 37,
-      "text": "Mineradores, médico, agricultores… *cada um com sua função.*",
-      "camera": {
-        "to": {
-          "pos": [
-            1,
-            9,
-            11
-          ],
-          "look": [
-            -2,
-            0.5,
-            -2
-          ],
-          "fov": 66
-        },
-        "ease": "inOut",
-        "shake": 0.04,
-        "duration": 3.5
-      }
-    },
-    {
-      "start": 37,
-      "end": 42,
-      "text": "Então a noite cai… e os *zumbis* voltam.",
-      "camera": {
-        "to": {
-          "pos": [
-            0,
-            30,
-            22
-          ],
-          "look": [
-            0,
-            0,
-            0
-          ],
-          "fov": 60
-        },
-        "ease": "inOut",
-        "shake": 0.04,
-        "duration": 3.0
-      }
-    },
-    {
-      "start": 42,
-      "end": 48,
-      "text": "Mas dessa vez, a paliçada *segura*. E os guardiões defendem o portão.",
+      "start": 44,
+      "end": 50,
+      "text": "Na primeira noite, os zumbis voltaram… e a paliçada *segurou.*",
+      "fala": "Na primeira noite, os zumbis voltaram… e a paliçada segurou.",
       "camera": {
         "to": {
           "pos": [
@@ -429,9 +432,10 @@
       }
     },
     {
-      "start": 48,
-      "end": 54,
-      "text": "Só que 47 pessoas *comem muito*. A comida acaba em 3 dias.",
+      "start": 50,
+      "end": 55,
+      "text": "Mas 160 pessoas *comem muito*. A comida acaba em 3 dias.",
+      "fala": "Mas cento e sessenta pessoas comem muito. Comida pra três dias.",
       "camera": {
         "to": {
           "pos": [
@@ -449,13 +453,13 @@
         "ease": "inOut",
         "shake": 0.04,
         "duration": 2.6
-      },
-      "fala": "Só que quarenta e sete pessoas comem muito. A comida acaba em três dias."
+      }
     },
     {
-      "start": 54,
+      "start": 55,
       "end": 59,
       "text": "E pior: *alguém lá fora viu a fumaça.*",
+      "fala": "E pior: alguém lá fora viu a fumaça.",
       "camera": {
         "to": {
           "pos": [
@@ -477,8 +481,9 @@
     },
     {
       "start": 59,
-      "end": 64,
+      "end": 63,
       "text": "Comenta seu *nome* e *função* pra entrar… e vota:",
+      "fala": "Comenta seu nome e função pra entrar… e vota.",
       "camera": {
         "to": {
           "pos": [
@@ -500,7 +505,7 @@
     }
   ],
   "choice": {
-    "start": 64,
+    "start": 63,
     "ask": "A COMIDA ACABA EM 3 DIAS. E AGORA?",
     "a": "Caçadores saem à noite pra caçar (arriscado)",
     "b": "Plantar uma horta e racionar (lento)",
@@ -517,17 +522,17 @@
       "id": "fogo"
     },
     {
-      "t": 37.5,
+      "t": 43.8,
       "id": "noite"
     },
     {
-      "t": 54.3,
+      "t": 55.3,
       "id": "sinalizador"
     }
   ],
   "effects": [
     {
-      "t": 42.4,
+      "t": 48.6,
       "type": "shake",
       "dur": 0.5,
       "amp": 0.5
@@ -535,7 +540,7 @@
   ],
   "zumbis": {
     "n": 28,
-    "aparece": 38.5,
+    "aparece": 44.2,
     "setor": [
       0,
       360
@@ -563,13 +568,17 @@
       ],
       "yaw": -160.0,
       "seed": 300,
-      "chega": 10.7,
+      "chega": 8.2,
       "de": [
         2.45,
         30
       ],
       "vel": 3.0,
-      "acao": "sentado"
+      "acao": "sentado",
+      "etiqueta": [
+        8.5,
+        14.2
+      ]
     },
     {
       "id": "m1",
@@ -582,7 +591,7 @@
       ],
       "yaw": 150,
       "seed": 301,
-      "chega": 11.0,
+      "chega": 8.35,
       "de": [
         2.45,
         30
@@ -592,6 +601,10 @@
       "noitePos": [
         10.95,
         -9.19
+      ],
+      "etiqueta": [
+        8.5,
+        14.2
       ]
     },
     {
@@ -605,13 +618,17 @@
       ],
       "yaw": -114.2,
       "seed": 302,
-      "chega": 11.3,
+      "chega": 8.5,
       "de": [
         2.45,
         30
       ],
       "vel": 3.0,
-      "acao": "sentado"
+      "acao": "sentado",
+      "etiqueta": [
+        8.5,
+        14.2
+      ]
     },
     {
       "id": "m3",
@@ -619,12 +636,12 @@
       "funcao": "Caçadora",
       "papel": "cacador",
       "pos": [
-        -5.4,
-        -7.5
+        -3.5,
+        8.5
       ],
-      "yaw": 150,
+      "yaw": -79.4,
       "seed": 303,
-      "chega": 11.6,
+      "chega": 6.4,
       "de": [
         2.45,
         30
@@ -632,12 +649,21 @@
       "vel": 3.0,
       "visual": {
         "hair": "rabo",
-        "height": 1.62
+        "height": 1.62,
+        "beard": false
       },
       "yawNoite": 141.11111111111111,
       "noitePos": [
         8.98,
         -11.13
+      ],
+      "etiqueta": [
+        8.5,
+        14.2
+      ],
+      "etiquetaFoco": [
+        14,
+        19
       ]
     },
     {
@@ -651,7 +677,7 @@
       ],
       "yaw": 150,
       "seed": 304,
-      "chega": 11.9,
+      "chega": 8.65,
       "de": [
         2.45,
         30
@@ -661,6 +687,10 @@
       "noitePos": [
         6.66,
         -12.65
+      ],
+      "etiqueta": [
+        8.5,
+        14.2
       ]
     },
     {
@@ -674,13 +704,17 @@
       ],
       "yaw": -68.6,
       "seed": 305,
-      "chega": 12.2,
+      "chega": 8.8,
       "de": [
         2.45,
         30
       ],
       "vel": 3.0,
-      "acao": "sentado"
+      "acao": "sentado",
+      "etiqueta": [
+        8.5,
+        14.2
+      ]
     },
     {
       "id": "m6",
@@ -693,12 +727,16 @@
       ],
       "yaw": 0,
       "seed": 306,
-      "chega": 12.5,
+      "chega": 8.95,
       "de": [
         2.45,
         30
       ],
-      "vel": 3.0
+      "vel": 3.0,
+      "etiqueta": [
+        8.5,
+        14.2
+      ]
     },
     {
       "id": "m7",
@@ -711,12 +749,16 @@
       ],
       "yaw": 0,
       "seed": 307,
-      "chega": 12.8,
+      "chega": 9.1,
       "de": [
         2.45,
         30
       ],
-      "vel": 3.0
+      "vel": 3.0,
+      "etiqueta": [
+        8.5,
+        14.2
+      ]
     },
     {
       "id": "m8",
@@ -724,17 +766,25 @@
       "funcao": "Armeiro",
       "papel": "militar",
       "pos": [
-        13.55,
-        -1.19
+        4.5,
+        9.0
       ],
-      "yaw": 95,
+      "yaw": -20.6,
       "seed": 308,
-      "chega": 13.1,
+      "chega": 6.55,
       "de": [
         2.45,
         30
       ],
-      "vel": 3.0
+      "vel": 3.0,
+      "etiqueta": [
+        8.5,
+        14.2
+      ],
+      "etiquetaFoco": [
+        19,
+        24
+      ]
     },
     {
       "id": "m9",
@@ -747,7 +797,7 @@
       ],
       "yaw": 0,
       "seed": 309,
-      "chega": 13.4,
+      "chega": 9.25,
       "de": [
         2.45,
         30
@@ -755,7 +805,11 @@
       "vel": 3.0,
       "visual": {
         "build": 1.35
-      }
+      },
+      "etiqueta": [
+        8.5,
+        14.2
+      ]
     },
     {
       "id": "m10",
@@ -768,13 +822,17 @@
       ],
       "yaw": -22.8,
       "seed": 310,
-      "chega": 13.7,
+      "chega": 9.4,
       "de": [
         2.45,
         30
       ],
       "vel": 3.0,
-      "acao": "sentado"
+      "acao": "sentado",
+      "etiqueta": [
+        8.5,
+        14.2
+      ]
     },
     {
       "id": "m11",
@@ -787,12 +845,16 @@
       ],
       "yaw": 42,
       "seed": 311,
-      "chega": 8.0,
+      "chega": 6.85,
       "de": [
         2.45,
         30
       ],
-      "vel": 3.0
+      "vel": 3.0,
+      "etiqueta": [
+        8.5,
+        14.2
+      ]
     },
     {
       "id": "m12",
@@ -805,7 +867,7 @@
       ],
       "yaw": 150,
       "seed": 312,
-      "chega": 14.0,
+      "chega": 9.55,
       "de": [
         2.45,
         30
@@ -815,6 +877,10 @@
       "noitePos": [
         4.1,
         -13.7
+      ],
+      "etiqueta": [
+        8.5,
+        14.2
       ]
     },
     {
@@ -828,12 +894,16 @@
       ],
       "yaw": 265,
       "seed": 313,
-      "chega": 14.3,
+      "chega": 9.7,
       "de": [
         2.45,
         30
       ],
-      "vel": 3.0
+      "vel": 3.0,
+      "etiqueta": [
+        8.5,
+        14.2
+      ]
     },
     {
       "id": "m14",
@@ -846,12 +916,16 @@
       ],
       "yaw": 0,
       "seed": 314,
-      "chega": 14.6,
+      "chega": 9.85,
       "de": [
         2.45,
         30
       ],
-      "vel": 3.0
+      "vel": 3.0,
+      "etiqueta": [
+        8.5,
+        14.2
+      ]
     },
     {
       "id": "m15",
@@ -864,12 +938,16 @@
       ],
       "yaw": 53,
       "seed": 315,
-      "chega": 8.3,
+      "chega": 7.0,
       "de": [
         2.45,
         30
       ],
-      "vel": 3.0
+      "vel": 3.0,
+      "etiqueta": [
+        8.5,
+        14.2
+      ]
     },
     {
       "id": "m16",
@@ -882,12 +960,16 @@
       ],
       "yaw": -120,
       "seed": 316,
-      "chega": 14.9,
+      "chega": 10.0,
       "de": [
         2.45,
         30
       ],
-      "vel": 3.0
+      "vel": 3.0,
+      "etiqueta": [
+        8.5,
+        14.2
+      ]
     },
     {
       "id": "m17",
@@ -898,9 +980,9 @@
         -2.03,
         -0.57
       ],
-      "yaw": 20.2,
+      "yaw": 117.3,
       "seed": 317,
-      "chega": 15.2,
+      "chega": 6.7,
       "de": [
         2.45,
         30
@@ -908,8 +990,17 @@
       "vel": 3.0,
       "visual": {
         "hair": "coque",
-        "height": 1.62
-      }
+        "height": 1.62,
+        "beard": false
+      },
+      "etiqueta": [
+        8.5,
+        14.2
+      ],
+      "etiquetaFoco": [
+        24,
+        29
+      ]
     },
     {
       "id": "m18",
@@ -922,12 +1013,16 @@
       ],
       "yaw": 64,
       "seed": 318,
-      "chega": 8.6,
+      "chega": 7.15,
       "de": [
         2.45,
         30
       ],
-      "vel": 3.0
+      "vel": 3.0,
+      "etiqueta": [
+        8.5,
+        14.2
+      ]
     },
     {
       "id": "m19",
@@ -940,12 +1035,16 @@
       ],
       "yaw": 0,
       "seed": 319,
-      "chega": 15.5,
+      "chega": 10.15,
       "de": [
         2.45,
         30
       ],
-      "vel": 3.0
+      "vel": 3.0,
+      "etiqueta": [
+        8.5,
+        14.2
+      ]
     },
     {
       "id": "m20",
@@ -958,12 +1057,16 @@
       ],
       "yaw": 0,
       "seed": 320,
-      "chega": 15.8,
+      "chega": 10.3,
       "de": [
         2.45,
         30
       ],
-      "vel": 3.0
+      "vel": 3.0,
+      "etiqueta": [
+        8.5,
+        14.2
+      ]
     },
     {
       "id": "m21",
@@ -976,12 +1079,16 @@
       ],
       "yaw": 69.8,
       "seed": 321,
-      "chega": 16.1,
+      "chega": 10.45,
       "de": [
         2.45,
         30
       ],
-      "vel": 3.0
+      "vel": 3.0,
+      "etiqueta": [
+        8.5,
+        14.2
+      ]
     },
     {
       "id": "m22",
@@ -994,7 +1101,7 @@
       ],
       "yaw": 150,
       "seed": 322,
-      "chega": 16.4,
+      "chega": 10.6,
       "de": [
         2.45,
         30
@@ -1004,6 +1111,10 @@
       "noitePos": [
         -10.95,
         -9.19
+      ],
+      "etiqueta": [
+        8.5,
+        14.2
       ]
     },
     {
@@ -1017,7 +1128,7 @@
       ],
       "yaw": 150,
       "seed": 323,
-      "chega": 16.7,
+      "chega": 10.75,
       "de": [
         2.45,
         30
@@ -1027,6 +1138,10 @@
       "noitePos": [
         1.38,
         -14.23
+      ],
+      "etiqueta": [
+        8.5,
+        14.2
       ]
     },
     {
@@ -1040,12 +1155,16 @@
       ],
       "yaw": -90,
       "seed": 324,
-      "chega": 17.0,
+      "chega": 10.9,
       "de": [
         2.45,
         30
       ],
-      "vel": 3.0
+      "vel": 3.0,
+      "etiqueta": [
+        8.5,
+        14.2
+      ]
     },
     {
       "id": "m25",
@@ -1058,7 +1177,7 @@
       ],
       "yaw": 150,
       "seed": 325,
-      "chega": 17.3,
+      "chega": 11.05,
       "de": [
         2.45,
         30
@@ -1068,6 +1187,10 @@
       "noitePos": [
         -1.38,
         -14.23
+      ],
+      "etiqueta": [
+        8.5,
+        14.2
       ]
     },
     {
@@ -1081,13 +1204,17 @@
       ],
       "yaw": 22.8,
       "seed": 326,
-      "chega": 17.6,
+      "chega": 11.2,
       "de": [
         2.45,
         30
       ],
       "vel": 3.0,
-      "acao": "sentado"
+      "acao": "sentado",
+      "etiqueta": [
+        8.5,
+        14.2
+      ]
     },
     {
       "id": "m27",
@@ -1100,7 +1227,7 @@
       ],
       "yaw": 150,
       "seed": 327,
-      "chega": 17.9,
+      "chega": 11.35,
       "de": [
         2.45,
         30
@@ -1110,6 +1237,10 @@
       "noitePos": [
         -4.1,
         -13.7
+      ],
+      "etiqueta": [
+        8.5,
+        14.2
       ]
     },
     {
@@ -1123,13 +1254,17 @@
       ],
       "yaw": -90,
       "seed": 328,
-      "chega": 18.2,
+      "chega": 11.5,
       "de": [
         2.45,
         30
       ],
       "vel": 3.0,
-      "acao": "capinar"
+      "acao": "capinar",
+      "etiqueta": [
+        8.5,
+        14.2
+      ]
     },
     {
       "id": "m29",
@@ -1142,12 +1277,16 @@
       ],
       "yaw": 180,
       "seed": 329,
-      "chega": 18.5,
+      "chega": 11.65,
       "de": [
         2.45,
         30
       ],
-      "vel": 3.0
+      "vel": 3.0,
+      "etiqueta": [
+        8.5,
+        14.2
+      ]
     },
     {
       "id": "m30",
@@ -1160,7 +1299,7 @@
       ],
       "yaw": 150,
       "seed": 330,
-      "chega": 18.8,
+      "chega": 11.8,
       "de": [
         2.45,
         30
@@ -1170,6 +1309,10 @@
       "noitePos": [
         -6.66,
         -12.65
+      ],
+      "etiqueta": [
+        8.5,
+        14.2
       ]
     },
     {
@@ -1183,7 +1326,7 @@
       ],
       "yaw": 0,
       "seed": 331,
-      "chega": 19.1,
+      "chega": 11.95,
       "de": [
         2.45,
         30
@@ -1191,7 +1334,11 @@
       "vel": 3.0,
       "visual": {
         "build": 1.3
-      }
+      },
+      "etiqueta": [
+        8.5,
+        14.2
+      ]
     },
     {
       "id": "m32",
@@ -1204,12 +1351,16 @@
       ],
       "yaw": 75,
       "seed": 332,
-      "chega": 8.9,
+      "chega": 7.3,
       "de": [
         2.45,
         30
       ],
-      "vel": 3.0
+      "vel": 3.0,
+      "etiqueta": [
+        8.5,
+        14.2
+      ]
     },
     {
       "id": "m33",
@@ -1222,7 +1373,7 @@
       ],
       "yaw": 150,
       "seed": 333,
-      "chega": 19.4,
+      "chega": 12.1,
       "de": [
         2.45,
         30
@@ -1232,6 +1383,10 @@
       "noitePos": [
         -8.98,
         -11.13
+      ],
+      "etiqueta": [
+        8.5,
+        14.2
       ]
     },
     {
@@ -1245,7 +1400,7 @@
       ],
       "yaw": 0,
       "seed": 334,
-      "chega": 9.2,
+      "chega": 7.45,
       "de": [
         2.45,
         30
@@ -1261,7 +1416,11 @@
           17.5
         ]
       ],
-      "velRota": 1.1
+      "velRota": 1.1,
+      "etiqueta": [
+        8.5,
+        14.2
+      ]
     },
     {
       "id": "m35",
@@ -1274,12 +1433,16 @@
       ],
       "yaw": 86,
       "seed": 335,
-      "chega": 9.5,
+      "chega": 7.6,
       "de": [
         2.45,
         30
       ],
-      "vel": 3.0
+      "vel": 3.0,
+      "etiqueta": [
+        8.5,
+        14.2
+      ]
     },
     {
       "id": "m36",
@@ -1292,12 +1455,16 @@
       ],
       "yaw": 97,
       "seed": 336,
-      "chega": 9.8,
+      "chega": 7.75,
       "de": [
         2.45,
         30
       ],
-      "vel": 3.0
+      "vel": 3.0,
+      "etiqueta": [
+        8.5,
+        14.2
+      ]
     },
     {
       "id": "m37",
@@ -1310,12 +1477,16 @@
       ],
       "yaw": 120.3,
       "seed": 337,
-      "chega": 19.7,
+      "chega": 12.25,
       "de": [
         2.45,
         30
       ],
-      "vel": 3.0
+      "vel": 3.0,
+      "etiqueta": [
+        8.5,
+        14.2
+      ]
     },
     {
       "id": "m38",
@@ -1328,12 +1499,16 @@
       ],
       "yaw": 0,
       "seed": 338,
-      "chega": 20.0,
+      "chega": 12.4,
       "de": [
         2.45,
         30
       ],
-      "vel": 3.0
+      "vel": 3.0,
+      "etiqueta": [
+        8.5,
+        14.2
+      ]
     },
     {
       "id": "m39",
@@ -1346,13 +1521,17 @@
       ],
       "yaw": 68.6,
       "seed": 339,
-      "chega": 20.3,
+      "chega": 12.55,
       "de": [
         2.45,
         30
       ],
       "vel": 3.0,
-      "acao": "sentado"
+      "acao": "sentado",
+      "etiqueta": [
+        8.5,
+        14.2
+      ]
     },
     {
       "id": "m40",
@@ -1365,12 +1544,16 @@
       ],
       "yaw": 108,
       "seed": 340,
-      "chega": 10.1,
+      "chega": 7.9,
       "de": [
         2.45,
         30
       ],
-      "vel": 3.0
+      "vel": 3.0,
+      "etiqueta": [
+        8.5,
+        14.2
+      ]
     },
     {
       "id": "m41",
@@ -1383,12 +1566,16 @@
       ],
       "yaw": 58,
       "seed": 341,
-      "chega": 10.4,
+      "chega": 8.05,
       "de": [
         2.45,
         30
       ],
-      "vel": 3.0
+      "vel": 3.0,
+      "etiqueta": [
+        8.5,
+        14.2
+      ]
     },
     {
       "id": "m42",
@@ -1401,7 +1588,7 @@
       ],
       "yaw": 90,
       "seed": 342,
-      "chega": 20.6,
+      "chega": 12.7,
       "de": [
         2.45,
         30
@@ -1409,9 +1596,14 @@
       "vel": 3.0,
       "visual": {
         "hair": "trancas",
-        "height": 1.62
+        "height": 1.62,
+        "beard": false
       },
-      "acao": "plantar"
+      "acao": "plantar",
+      "etiqueta": [
+        8.5,
+        14.2
+      ]
     },
     {
       "id": "m43",
@@ -1424,12 +1616,16 @@
       ],
       "yaw": 30,
       "seed": 343,
-      "chega": 20.9,
+      "chega": 12.85,
       "de": [
         2.45,
         30
       ],
-      "vel": 3.0
+      "vel": 3.0,
+      "etiqueta": [
+        8.5,
+        14.2
+      ]
     },
     {
       "id": "m44",
@@ -1442,12 +1638,16 @@
       ],
       "yaw": 150,
       "seed": 344,
-      "chega": 21.2,
+      "chega": 13.0,
       "de": [
         2.45,
         30
       ],
-      "vel": 3.0
+      "vel": 3.0,
+      "etiqueta": [
+        8.5,
+        14.2
+      ]
     },
     {
       "id": "m45",
@@ -1460,7 +1660,7 @@
       ],
       "yaw": 114.2,
       "seed": 345,
-      "chega": 21.5,
+      "chega": 13.15,
       "de": [
         2.45,
         30
@@ -1468,9 +1668,14 @@
       "vel": 3.0,
       "visual": {
         "hair": "coque",
-        "height": 1.62
+        "height": 1.62,
+        "beard": false
       },
-      "acao": "sentado"
+      "acao": "sentado",
+      "etiqueta": [
+        8.5,
+        14.2
+      ]
     }
   ],
   "narracao": {
@@ -1485,7 +1690,7 @@
     },
     "extras": [
       {
-        "t": 64.4,
+        "t": 63.4,
         "ate": 70,
         "fala": "Caçar à noite, ou plantar e racionar? Comenta A ou B."
       }
@@ -1506,9 +1711,14 @@
     {
       "t": 0,
       "sfx": "lofi",
-      "vol": 0.55,
-      "dur": 37,
+      "vol": 0.5,
+      "dur": 43,
       "fadeOut": 4
+    },
+    {
+      "t": 0,
+      "sfx": "fogueira",
+      "vol": 0.3
     },
     {
       "t": 2.7,
@@ -1516,78 +1726,88 @@
       "vol": 0.25
     },
     {
-      "t": 17.3,
+      "t": 9.2,
+      "sfx": "vibra",
+      "vol": 0.25
+    },
+    {
+      "t": 14.1,
+      "sfx": "whoosh",
+      "vol": 0.2
+    },
+    {
+      "t": 19.1,
+      "sfx": "whoosh",
+      "vol": 0.2
+    },
+    {
+      "t": 24.1,
+      "sfx": "whoosh",
+      "vol": 0.2
+    },
+    {
+      "t": 29.3,
+      "sfx": "impacto",
+      "vol": 0.55
+    },
+    {
+      "t": 33.8,
       "sfx": "whoosh",
       "vol": 0.3
     },
     {
-      "t": 22,
+      "t": 36,
       "sfx": "martelo",
-      "vol": 0.5
+      "vol": 0.45
     },
     {
-      "t": 28,
+      "t": 40,
       "sfx": "martelo",
-      "vol": 0.35
+      "vol": 0.4
     },
     {
-      "t": 0,
-      "sfx": "fogueira",
-      "vol": 0.35
-    },
-    {
-      "t": 37,
+      "t": 43.5,
       "sfx": "trilha",
       "vol": 0.8,
-      "dur": 27
+      "dur": 20
     },
     {
-      "t": 38,
+      "t": 44,
       "sfx": "grilos",
       "vol": 0.35
     },
     {
-      "t": 39.5,
+      "t": 45.2,
       "sfx": "grunhido",
       "vol": 0.8
     },
     {
-      "t": 41.2,
+      "t": 47,
       "sfx": "grunhido",
       "vol": 0.7
     },
     {
-      "t": 42.4,
+      "t": 48.6,
       "sfx": "impacto",
       "vol": 0.6
     },
     {
-      "t": 43.8,
-      "sfx": "grunhido",
-      "vol": 0.85
-    },
-    {
-      "t": 46.1,
-      "sfx": "grunhido",
-      "vol": 0.7
-    },
-    {
-      "t": 48,
+      "t": 50,
       "sfx": "coracao",
       "vol": 0.7
     },
     {
-      "t": 54.3,
+      "t": 55.3,
       "sfx": "whoosh",
       "vol": 0.5
     },
     {
-      "t": 54.4,
+      "t": 55.4,
       "sfx": "tensao",
       "vol": 0.6
     },
     {
-      "t": 64,
+      "t": 63,
       "sfx": "impacto",
       "vol": 0.8
     }
@@ -1595,7 +1815,44 @@
   "post": {
     "canal": "@esefossevoceai",
     "titulo": "Os seguidores chegaram (Parte 2)",
-    "descricao": "Parte 2 🌲🧟 46 seguidores viraram moradores e a paliçada subiu! Mas a comida acaba em 3 dias… Comenta seu NOME + FUNÇÃO e vota A ou B 👇 #apocalipsezumbi #oquevocefaria #pov #parte2 #AComunidade",
+    "descricao": "Parte 2 🌲🧟 Cada comentário virou um morador: já somos 160! A paliçada subiu… mas a comida acaba em 3 dias. Comenta seu NOME + FUNÇÃO e vota A ou B 👇 #apocalipsezumbi #oquevocefaria #pov #parte2 #AComunidade",
     "comentario_fixado": "🍖 PARTE 3 — comenta assim:\nNOME + FUNÇÃO + A ou B\nA) Caçadores saem à noite pra caçar\nB) Plantar uma horta e racionar\nOs comentários mais curtidos viram moradores!"
-  }
+  },
+  "comentarios": [
+    {
+      "start": 9.3,
+      "end": 11.6,
+      "user": "maranhense",
+      "text": "Eu pfvr: caçador",
+      "cor": "#2d3436"
+    },
+    {
+      "start": 11.6,
+      "end": 13.9,
+      "user": "Davi",
+      "text": "nome: Davi · função: construtor",
+      "cor": "#636e72"
+    },
+    {
+      "start": 14.2,
+      "end": 18.9,
+      "user": "Huskyzinha",
+      "text": "Eu yuki : caçador",
+      "cor": "#a1887f"
+    },
+    {
+      "start": 19.2,
+      "end": 23.9,
+      "user": "Ruhan",
+      "text": "Quero ser um armeiro, ex militar e tenho experiência em selva",
+      "cor": "#455a64"
+    },
+    {
+      "start": 24.2,
+      "end": 28.9,
+      "user": "★ Kely Tetê ★",
+      "text": "A, meu nome Anna, eu quero ser caçadora de comida master chef",
+      "cor": "#c2185b"
+    }
+  ]
 }

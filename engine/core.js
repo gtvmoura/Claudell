@@ -197,6 +197,11 @@ function updateOverlay(t) {
     $('#counter .value').style.transform = `scale(${pulse})`;
     $('#counter .dot').style.opacity = Math.sin(t * Math.PI * 2) > 0 ? 1 : 0.25;
   }
+  // card de comentário
+  { const cm = (s.comentarios || []).find(c => t >= c.start && t < c.end), el = $('#comment');
+    if (cm) { if (el.dataset.k !== String(cm.start)) { el.dataset.k = String(cm.start); el.querySelector('.av').textContent = (cm.user || '?').trim()[0].toUpperCase(); el.querySelector('.av').style.background = cm.cor || '#6c5ce7'; el.querySelector('.user').textContent = cm.user; el.querySelector('.txt').textContent = cm.text; }
+      const k = clamp((t - cm.start) / 0.35), o = clamp((cm.end - t) / 0.3); el.style.opacity = Math.min(k, o); el.style.transform = `translateY(${(1 - EASE.out(k)) * -40}px) scale(${0.85 + 0.15 * EASE.back(k)})`;
+    } else el.style.opacity = 0; }
   // medidor (ex.: comida acabando)
   if (s.medidor) {
     const m = s.medidor, K = m.keys; let v = K[K.length - 1][1];
