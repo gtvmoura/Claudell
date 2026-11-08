@@ -63,7 +63,7 @@ export function narrar(script) {
     const dur = duracao(file);
     const t = cap.start + (cap.atraso ?? cfg.atraso ?? 0.15);
     if (t + dur > cap.end + 0.4) console.warn(`  ⚠ fala mais longa que a legenda (${dur.toFixed(1)} s em ${(cap.end - cap.start).toFixed(1)} s): "${text}"`);
-    out.push({ t, file, dur, vol: cap.vol ?? cfg.vol ?? 1, text, efeito: cfg.efeito, tom: cfg.tom });
+    out.push({ t, file, dur, vol: cap.vol ?? cfg.vol ?? 1, text, efeito: cfg.efeito, tom: cfg.tom, formante: cfg.formante });
   }
   return out;
 }
