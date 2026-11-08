@@ -1,0 +1,1601 @@
+{
+  "series": "a-comunidade",
+  "episode": {
+    "number": 2,
+    "label": "PARTE 2"
+  },
+  "scene": "floresta",
+  "seed": 2078,
+  "width": 1080,
+  "height": 1920,
+  "fps": 30,
+  "duration": 70,
+  "populacao": 47,
+  "maxEtiquetas": 10,
+  "construido": [
+    "palicada",
+    "roca",
+    "pedreira",
+    "panela",
+    "comida",
+    "tocos"
+  ],
+  "obras": {
+    "palicada": [
+      17.5,
+      34
+    ]
+  },
+  "bandeira": [
+    [
+      0,
+      1
+    ],
+    [
+      26.5,
+      47
+    ]
+  ],
+  "title": {
+    "kicker": "PARTE 2",
+    "text": "os *seguidores* chegaram.",
+    "short": "A Comunidade",
+    "duration": 3.0,
+    "fala": "Parte dois: os seguidores chegaram.",
+    "camera": {
+      "to": {
+        "pos": [
+          0,
+          26,
+          28
+        ],
+        "look": [
+          0,
+          0,
+          2
+        ],
+        "fov": 55
+      },
+      "ease": "out",
+      "shake": 0.03
+    }
+  },
+  "camera": {
+    "start": {
+      "pos": [
+        0,
+        40,
+        40
+      ],
+      "look": [
+        0,
+        0,
+        0
+      ],
+      "fov": 55
+    },
+    "bob": false
+  },
+  "counter": {
+    "label": "Moradores",
+    "format": "number",
+    "showAt": 3,
+    "keys": [
+      [
+        0,
+        1
+      ],
+      [
+        8.5,
+        1
+      ],
+      [
+        26.5,
+        47
+      ],
+      [
+        70,
+        47
+      ]
+    ]
+  },
+  "medidor": {
+    "label": "Comida",
+    "showAt": 48,
+    "keys": [
+      [
+        48,
+        1
+      ],
+      [
+        53.5,
+        0.3
+      ]
+    ],
+    "textos": [
+      [
+        48,
+        "10 dias"
+      ],
+      [
+        50,
+        "6 dias"
+      ],
+      [
+        52,
+        "3 dias"
+      ]
+    ]
+  },
+  "fundador": {
+    "nome": "@esefossevoceai",
+    "funcao": "Fundador",
+    "etiquetaAte": 36,
+    "trajeto": [
+      [
+        0,
+        0.6,
+        2.6
+      ],
+      [
+        6,
+        0.6,
+        2.6
+      ],
+      [
+        9,
+        0.8,
+        11.5
+      ],
+      [
+        16,
+        0.8,
+        11.5
+      ],
+      [
+        19,
+        1.2,
+        3.6
+      ],
+      [
+        37,
+        1.2,
+        3.6
+      ],
+      [
+        40,
+        0.6,
+        11.8
+      ]
+    ],
+    "acoes": [
+      [
+        0,
+        "parado"
+      ],
+      [
+        9,
+        "acenar"
+      ],
+      [
+        14,
+        "parado"
+      ],
+      [
+        19,
+        "apontar"
+      ],
+      [
+        23,
+        "parado"
+      ],
+      [
+        40,
+        "parado"
+      ]
+    ],
+    "yaws": [
+      [
+        0,
+        0
+      ],
+      [
+        9,
+        0
+      ],
+      [
+        19,
+        -40
+      ],
+      [
+        23,
+        0
+      ],
+      [
+        40,
+        0
+      ]
+    ]
+  },
+  "captions": [
+    {
+      "start": 3,
+      "end": 7,
+      "text": "Ontem, ele estava *sozinho*. Cercado pela floresta.",
+      "camera": {
+        "to": {
+          "pos": [
+            3.2,
+            4.5,
+            9.5
+          ],
+          "look": [
+            -0.4,
+            1.1,
+            1.8
+          ],
+          "fov": 52
+        },
+        "ease": "inOut",
+        "shake": 0.04,
+        "duration": 3.0
+      },
+      "fala": "Ontem, ele estava sozinho."
+    },
+    {
+      "start": 7,
+      "end": 12,
+      "text": "Mas hoje de manhã… *alguém apareceu na trilha.*",
+      "camera": {
+        "to": {
+          "pos": [
+            5,
+            4.6,
+            22
+          ],
+          "look": [
+            1.5,
+            1.2,
+            30
+          ],
+          "fov": 50
+        },
+        "ease": "inOut",
+        "shake": 0.04,
+        "duration": 3.0
+      }
+    },
+    {
+      "start": 12,
+      "end": 17,
+      "text": "Depois outro. E outro. *46 sobreviventes.*",
+      "camera": {
+        "to": {
+          "pos": [
+            8,
+            11,
+            26
+          ],
+          "look": [
+            0.5,
+            0.5,
+            15
+          ],
+          "fov": 58
+        },
+        "ease": "inOut",
+        "shake": 0.04,
+        "duration": 4.0
+      },
+      "fala": "Depois outro. E outro. Quarenta e seis!"
+    },
+    {
+      "start": 17,
+      "end": 22,
+      "text": "Vocês votaram: *paliçada de troncos.*",
+      "camera": {
+        "to": {
+          "pos": [
+            0,
+            27,
+            26
+          ],
+          "look": [
+            0,
+            0,
+            2
+          ],
+          "fov": 58
+        },
+        "ease": "inOut",
+        "shake": 0.04,
+        "duration": 3.5
+      }
+    },
+    {
+      "start": 22,
+      "end": 27,
+      "text": "Os lenhadores derrubam árvores. Os *construtores* levantam o muro.",
+      "camera": {
+        "to": {
+          "pos": [
+            6.5,
+            6.5,
+            1.5
+          ],
+          "look": [
+            13.5,
+            1.2,
+            8.5
+          ],
+          "fov": 60
+        },
+        "ease": "inOut",
+        "shake": 0.04,
+        "duration": 2.8
+      },
+      "fala": "Lenhadores derrubam árvores. Construtores levantam o muro."
+    },
+    {
+      "start": 27,
+      "end": 32,
+      "text": "Os *caçadores* se preparam. Os cozinheiros acendem o fogo.",
+      "camera": {
+        "to": {
+          "pos": [
+            -1.5,
+            3.4,
+            5.5
+          ],
+          "look": [
+            -4.2,
+            1.1,
+            -4.5
+          ],
+          "fov": 58
+        },
+        "ease": "inOut",
+        "shake": 0.04,
+        "duration": 2.8
+      }
+    },
+    {
+      "start": 32,
+      "end": 37,
+      "text": "Mineradores, médico, agricultores… *cada um com sua função.*",
+      "camera": {
+        "to": {
+          "pos": [
+            1,
+            9,
+            11
+          ],
+          "look": [
+            -2,
+            0.5,
+            -2
+          ],
+          "fov": 66
+        },
+        "ease": "inOut",
+        "shake": 0.04,
+        "duration": 3.5
+      }
+    },
+    {
+      "start": 37,
+      "end": 42,
+      "text": "Então a noite cai… e os *zumbis* voltam.",
+      "camera": {
+        "to": {
+          "pos": [
+            0,
+            30,
+            22
+          ],
+          "look": [
+            0,
+            0,
+            0
+          ],
+          "fov": 60
+        },
+        "ease": "inOut",
+        "shake": 0.04,
+        "duration": 3.0
+      }
+    },
+    {
+      "start": 42,
+      "end": 48,
+      "text": "Mas dessa vez, a paliçada *segura*. E os guardiões defendem o portão.",
+      "camera": {
+        "to": {
+          "pos": [
+            0,
+            7.5,
+            6.0
+          ],
+          "look": [
+            0,
+            0.6,
+            21
+          ],
+          "fov": 58
+        },
+        "ease": "inOut",
+        "shake": 0.07,
+        "duration": 2.6
+      }
+    },
+    {
+      "start": 48,
+      "end": 54,
+      "text": "Só que 47 pessoas *comem muito*. A comida acaba em 3 dias.",
+      "camera": {
+        "to": {
+          "pos": [
+            6.8,
+            2.4,
+            1.8
+          ],
+          "look": [
+            4.2,
+            0.6,
+            -1.6
+          ],
+          "fov": 50
+        },
+        "ease": "inOut",
+        "shake": 0.04,
+        "duration": 2.6
+      },
+      "fala": "Só que quarenta e sete pessoas comem muito. A comida acaba em três dias."
+    },
+    {
+      "start": 54,
+      "end": 59,
+      "text": "E pior: *alguém lá fora viu a fumaça.*",
+      "camera": {
+        "to": {
+          "pos": [
+            2,
+            3.2,
+            9
+          ],
+          "look": [
+            -55,
+            32,
+            -100
+          ],
+          "fov": 56
+        },
+        "ease": "inOut",
+        "shake": 0.06,
+        "duration": 2.4
+      }
+    },
+    {
+      "start": 59,
+      "end": 64,
+      "text": "Comenta seu *nome* e *função* pra entrar… e vota:",
+      "camera": {
+        "to": {
+          "pos": [
+            0,
+            34,
+            10
+          ],
+          "look": [
+            0,
+            0,
+            0
+          ],
+          "fov": 60
+        },
+        "ease": "inOut",
+        "shake": 0.04,
+        "duration": 3.0
+      }
+    }
+  ],
+  "choice": {
+    "start": 64,
+    "ask": "A COMIDA ACABA EM 3 DIAS. E AGORA?",
+    "a": "Caçadores saem à noite pra caçar (arriscado)",
+    "b": "Plantar uma horta e racionar (lento)",
+    "cta": "COMENTE A OU B",
+    "sub": "+ seu NOME e FUNÇÃO pra virar morador"
+  },
+  "events": [
+    {
+      "t": -10,
+      "id": "bandeira"
+    },
+    {
+      "t": -10,
+      "id": "fogo"
+    },
+    {
+      "t": 37.5,
+      "id": "noite"
+    },
+    {
+      "t": 54.3,
+      "id": "sinalizador"
+    }
+  ],
+  "effects": [
+    {
+      "t": 42.4,
+      "type": "shake",
+      "dur": 0.5,
+      "amp": 0.5
+    }
+  ],
+  "zumbis": {
+    "n": 28,
+    "aparece": 38.5,
+    "setor": [
+      0,
+      360
+    ],
+    "raioIni": 27,
+    "raioFim": 16.9,
+    "vel": 1.3
+  },
+  "sinalizador": {
+    "pos": [
+      -62,
+      0,
+      -115
+    ]
+  },
+  "cidadaos": [
+    {
+      "id": "m0",
+      "nome": "Rizu",
+      "funcao": "Morador",
+      "papel": "morador",
+      "pos": [
+        -0.54,
+        3.51
+      ],
+      "yaw": -160.0,
+      "seed": 300,
+      "chega": 10.7,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0,
+      "acao": "sentado"
+    },
+    {
+      "id": "m1",
+      "nome": "maranhense",
+      "funcao": "Caçador",
+      "papel": "cacador",
+      "pos": [
+        -6.5,
+        -7.5
+      ],
+      "yaw": 150,
+      "seed": 301,
+      "chega": 11.0,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0,
+      "yawNoite": 130.0,
+      "noitePos": [
+        10.95,
+        -9.19
+      ]
+    },
+    {
+      "id": "m2",
+      "nome": "Lc",
+      "funcao": "Morador",
+      "papel": "morador",
+      "pos": [
+        1.23,
+        1.87
+      ],
+      "yaw": -114.2,
+      "seed": 302,
+      "chega": 11.3,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0,
+      "acao": "sentado"
+    },
+    {
+      "id": "m3",
+      "nome": "Yuki",
+      "funcao": "Caçadora",
+      "papel": "cacador",
+      "pos": [
+        -5.4,
+        -7.5
+      ],
+      "yaw": 150,
+      "seed": 303,
+      "chega": 11.6,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0,
+      "visual": {
+        "hair": "rabo",
+        "height": 1.62
+      },
+      "yawNoite": 141.11111111111111,
+      "noitePos": [
+        8.98,
+        -11.13
+      ]
+    },
+    {
+      "id": "m4",
+      "nome": "Alex",
+      "funcao": "Caçador",
+      "papel": "cacador",
+      "pos": [
+        -4.3,
+        -7.5
+      ],
+      "yaw": 150,
+      "seed": 304,
+      "chega": 11.9,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0,
+      "yawNoite": 152.22222222222223,
+      "noitePos": [
+        6.66,
+        -12.65
+      ]
+    },
+    {
+      "id": "m5",
+      "nome": "Gustavo",
+      "funcao": "Morador",
+      "papel": "morador",
+      "pos": [
+        1.29,
+        -0.53
+      ],
+      "yaw": -68.6,
+      "seed": 305,
+      "chega": 12.2,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0,
+      "acao": "sentado"
+    },
+    {
+      "id": "m6",
+      "nome": "Miguel",
+      "funcao": "Guardião",
+      "papel": "guardiao",
+      "pos": [
+        -3.0,
+        13.6
+      ],
+      "yaw": 0,
+      "seed": 306,
+      "chega": 12.5,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0
+    },
+    {
+      "id": "m7",
+      "nome": "SP",
+      "funcao": "Protetor",
+      "papel": "guardiao",
+      "pos": [
+        -1.0,
+        13.6
+      ],
+      "yaw": 0,
+      "seed": 307,
+      "chega": 12.8,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0
+    },
+    {
+      "id": "m8",
+      "nome": "Ruhan",
+      "funcao": "Armeiro",
+      "papel": "militar",
+      "pos": [
+        13.55,
+        -1.19
+      ],
+      "yaw": 95,
+      "seed": 308,
+      "chega": 13.1,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0
+    },
+    {
+      "id": "m9",
+      "nome": "Hugo",
+      "funcao": "Fortão",
+      "papel": "lutador",
+      "pos": [
+        1.0,
+        12.2
+      ],
+      "yaw": 0,
+      "seed": 309,
+      "chega": 13.4,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0,
+      "visual": {
+        "build": 1.35
+      }
+    },
+    {
+      "id": "m10",
+      "nome": "higuruma",
+      "funcao": "Morador",
+      "papel": "morador",
+      "pos": [
+        -0.4,
+        -2.26
+      ],
+      "yaw": -22.8,
+      "seed": 310,
+      "chega": 13.7,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0,
+      "acao": "sentado"
+    },
+    {
+      "id": "m11",
+      "nome": "Miguel Eduardo",
+      "funcao": "Construtor",
+      "papel": "construtor",
+      "pos": [
+        9.7,
+        10.78
+      ],
+      "yaw": 42,
+      "seed": 311,
+      "chega": 8.0,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0
+    },
+    {
+      "id": "m12",
+      "nome": "Wolfy",
+      "funcao": "Caçador",
+      "papel": "cacador",
+      "pos": [
+        -3.2,
+        -7.5
+      ],
+      "yaw": 150,
+      "seed": 312,
+      "chega": 14.0,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0,
+      "yawNoite": 163.33333333333331,
+      "noitePos": [
+        4.1,
+        -13.7
+      ]
+    },
+    {
+      "id": "m13",
+      "nome": "Lucas",
+      "funcao": "Atirador",
+      "papel": "militar",
+      "pos": [
+        -13.55,
+        -1.19
+      ],
+      "yaw": 265,
+      "seed": 313,
+      "chega": 14.3,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0
+    },
+    {
+      "id": "m14",
+      "nome": "Vini",
+      "funcao": "Mata-Zumbi",
+      "papel": "guardiao",
+      "pos": [
+        1.0,
+        13.6
+      ],
+      "yaw": 0,
+      "seed": 314,
+      "chega": 14.6,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0
+    },
+    {
+      "id": "m15",
+      "nome": "Ravenn",
+      "funcao": "Construtor",
+      "papel": "construtor",
+      "pos": [
+        11.58,
+        8.73
+      ],
+      "yaw": 53,
+      "seed": 315,
+      "chega": 8.3,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0
+    },
+    {
+      "id": "m16",
+      "nome": "Black777",
+      "funcao": "Minerador",
+      "papel": "minerador",
+      "pos": [
+        -8.0,
+        -3.9
+      ],
+      "yaw": -120,
+      "seed": 316,
+      "chega": 14.9,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0
+    },
+    {
+      "id": "m17",
+      "nome": "Anna",
+      "funcao": "Master Chef",
+      "papel": "cozinheiro",
+      "pos": [
+        -2.03,
+        -0.57
+      ],
+      "yaw": 20.2,
+      "seed": 317,
+      "chega": 15.2,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0,
+      "visual": {
+        "hair": "coque",
+        "height": 1.62
+      }
+    },
+    {
+      "id": "m18",
+      "nome": "Davi",
+      "funcao": "Construtor",
+      "papel": "construtor",
+      "pos": [
+        13.03,
+        6.36
+      ],
+      "yaw": 64,
+      "seed": 318,
+      "chega": 8.6,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0
+    },
+    {
+      "id": "m19",
+      "nome": "Miguel",
+      "funcao": "Espadachim",
+      "papel": "espadachim",
+      "pos": [
+        -1.0,
+        12.2
+      ],
+      "yaw": 0,
+      "seed": 319,
+      "chega": 15.5,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0
+    },
+    {
+      "id": "m20",
+      "nome": "Lucky",
+      "funcao": "Lutador",
+      "papel": "lutador",
+      "pos": [
+        3.0,
+        12.2
+      ],
+      "yaw": 0,
+      "seed": 320,
+      "chega": 15.8,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0
+    },
+    {
+      "id": "m21",
+      "nome": "Samy",
+      "funcao": "Cozinheiro",
+      "papel": "cozinheiro",
+      "pos": [
+        -2.77,
+        0.17
+      ],
+      "yaw": 69.8,
+      "seed": 321,
+      "chega": 16.1,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0
+    },
+    {
+      "id": "m22",
+      "nome": "João",
+      "funcao": "Arqueiro",
+      "papel": "arqueiro",
+      "pos": [
+        -5.4,
+        -9.7
+      ],
+      "yaw": 150,
+      "seed": 322,
+      "chega": 16.4,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0,
+      "yawNoite": 230.0,
+      "noitePos": [
+        -10.95,
+        -9.19
+      ]
+    },
+    {
+      "id": "m23",
+      "nome": "Dom",
+      "funcao": "Caçador",
+      "papel": "cacador",
+      "pos": [
+        -6.5,
+        -8.6
+      ],
+      "yaw": 150,
+      "seed": 323,
+      "chega": 16.7,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0,
+      "yawNoite": 174.44444444444446,
+      "noitePos": [
+        1.38,
+        -14.23
+      ]
+    },
+    {
+      "id": "m24",
+      "nome": "Gabriel",
+      "funcao": "Minerador",
+      "papel": "minerador",
+      "pos": [
+        -9.3,
+        -3.6999999999999997
+      ],
+      "yaw": -90,
+      "seed": 324,
+      "chega": 17.0,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0
+    },
+    {
+      "id": "m25",
+      "nome": "Asta",
+      "funcao": "Caçador",
+      "papel": "cacador",
+      "pos": [
+        -5.4,
+        -8.6
+      ],
+      "yaw": 150,
+      "seed": 325,
+      "chega": 17.3,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0,
+      "yawNoite": 185.55555555555554,
+      "noitePos": [
+        -1.38,
+        -14.23
+      ]
+    },
+    {
+      "id": "m26",
+      "nome": "Nick",
+      "funcao": "Morador",
+      "papel": "morador",
+      "pos": [
+        -2.8,
+        -2.26
+      ],
+      "yaw": 22.8,
+      "seed": 326,
+      "chega": 17.6,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0,
+      "acao": "sentado"
+    },
+    {
+      "id": "m27",
+      "nome": "Cassiano",
+      "funcao": "Caçador",
+      "papel": "cacador",
+      "pos": [
+        -4.3,
+        -8.6
+      ],
+      "yaw": 150,
+      "seed": 327,
+      "chega": 17.9,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0,
+      "yawNoite": 196.66666666666666,
+      "noitePos": [
+        -4.1,
+        -13.7
+      ]
+    },
+    {
+      "id": "m28",
+      "nome": "Edward",
+      "funcao": "Jardineiro",
+      "papel": "agricultor",
+      "pos": [
+        7.4,
+        4.7
+      ],
+      "yaw": -90,
+      "seed": 328,
+      "chega": 18.2,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0,
+      "acao": "capinar"
+    },
+    {
+      "id": "m29",
+      "nome": "Nicolas",
+      "funcao": "Militar",
+      "papel": "militar",
+      "pos": [
+        0.0,
+        -13.6
+      ],
+      "yaw": 180,
+      "seed": 329,
+      "chega": 18.5,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0
+    },
+    {
+      "id": "m30",
+      "nome": "Black Ninja",
+      "funcao": "Caçador",
+      "papel": "cacador",
+      "pos": [
+        -3.2,
+        -8.6
+      ],
+      "yaw": 150,
+      "seed": 330,
+      "chega": 18.8,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0,
+      "yawNoite": 207.77777777777777,
+      "noitePos": [
+        -6.66,
+        -12.65
+      ]
+    },
+    {
+      "id": "m31",
+      "nome": "Kratos",
+      "funcao": "Protetor",
+      "papel": "guardiao",
+      "pos": [
+        3.0,
+        13.6
+      ],
+      "yaw": 0,
+      "seed": 331,
+      "chega": 19.1,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0,
+      "visual": {
+        "build": 1.3
+      }
+    },
+    {
+      "id": "m32",
+      "nome": "João",
+      "funcao": "Construtor",
+      "papel": "construtor",
+      "pos": [
+        14.01,
+        3.75
+      ],
+      "yaw": 75,
+      "seed": 332,
+      "chega": 8.9,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0
+    },
+    {
+      "id": "m33",
+      "nome": "Bernardo",
+      "funcao": "Caçador",
+      "papel": "cacador",
+      "pos": [
+        -6.5,
+        -9.7
+      ],
+      "yaw": 150,
+      "seed": 333,
+      "chega": 19.4,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0,
+      "yawNoite": 218.88888888888889,
+      "noitePos": [
+        -8.98,
+        -11.13
+      ]
+    },
+    {
+      "id": "m34",
+      "nome": "J. Vitor",
+      "funcao": "Ajudante",
+      "papel": "ajudante",
+      "pos": [
+        12.53,
+        14.94
+      ],
+      "yaw": 0,
+      "seed": 334,
+      "chega": 9.2,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0,
+      "rota": [
+        [
+          16.15,
+          12.62
+        ],
+        [
+          1.6,
+          17.5
+        ]
+      ],
+      "velRota": 1.1
+    },
+    {
+      "id": "m35",
+      "nome": "RFX",
+      "funcao": "Construtor",
+      "papel": "construtor",
+      "pos": [
+        14.46,
+        1.01
+      ],
+      "yaw": 86,
+      "seed": 335,
+      "chega": 9.5,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0
+    },
+    {
+      "id": "m36",
+      "nome": "Weverthon",
+      "funcao": "Construtor",
+      "papel": "construtor",
+      "pos": [
+        14.39,
+        -1.77
+      ],
+      "yaw": 97,
+      "seed": 336,
+      "chega": 9.8,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0
+    },
+    {
+      "id": "m37",
+      "nome": "Vieira",
+      "funcao": "Cozinheiro",
+      "papel": "cozinheiro",
+      "pos": [
+        -2.68,
+        1.23
+      ],
+      "yaw": 120.3,
+      "seed": 337,
+      "chega": 19.7,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0
+    },
+    {
+      "id": "m38",
+      "nome": "Caveira",
+      "funcao": "Guarda",
+      "papel": "guardiao",
+      "pos": [
+        -3.0,
+        12.2
+      ],
+      "yaw": 0,
+      "seed": 338,
+      "chega": 20.0,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0
+    },
+    {
+      "id": "m39",
+      "nome": "Sabo",
+      "funcao": "Morador",
+      "papel": "morador",
+      "pos": [
+        -4.49,
+        -0.53
+      ],
+      "yaw": 68.6,
+      "seed": 339,
+      "chega": 20.3,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0,
+      "acao": "sentado"
+    },
+    {
+      "id": "m40",
+      "nome": "Gatoya",
+      "funcao": "Construtor",
+      "papel": "construtor",
+      "pos": [
+        13.79,
+        -4.48
+      ],
+      "yaw": 108,
+      "seed": 340,
+      "chega": 10.1,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0
+    },
+    {
+      "id": "m41",
+      "nome": "Baconzito",
+      "funcao": "Lenhador",
+      "papel": "lenhador",
+      "pos": [
+        17.98,
+        11.23
+      ],
+      "yaw": 58,
+      "seed": 341,
+      "chega": 10.4,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0
+    },
+    {
+      "id": "m42",
+      "nome": "Julia",
+      "funcao": "Agricultora",
+      "papel": "agricultor",
+      "pos": [
+        9.0,
+        5.800000000000001
+      ],
+      "yaw": 90,
+      "seed": 342,
+      "chega": 20.6,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0,
+      "visual": {
+        "hair": "trancas",
+        "height": 1.62
+      },
+      "acao": "plantar"
+    },
+    {
+      "id": "m43",
+      "nome": "Jão",
+      "funcao": "Criador",
+      "papel": "criador",
+      "pos": [
+        5.2,
+        -3.0
+      ],
+      "yaw": 30,
+      "seed": 343,
+      "chega": 20.9,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0
+    },
+    {
+      "id": "m44",
+      "nome": "Cleiton",
+      "funcao": "Médico",
+      "papel": "medico",
+      "pos": [
+        -3.0,
+        1.6
+      ],
+      "yaw": 150,
+      "seed": 344,
+      "chega": 21.2,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0
+    },
+    {
+      "id": "m45",
+      "nome": "ferreirinha",
+      "funcao": "Moradora",
+      "papel": "morador",
+      "pos": [
+        -4.43,
+        1.87
+      ],
+      "yaw": 114.2,
+      "seed": 345,
+      "chega": 21.5,
+      "de": [
+        2.45,
+        30
+      ],
+      "vel": 3.0,
+      "visual": {
+        "hair": "coque",
+        "height": 1.62
+      },
+      "acao": "sentado"
+    }
+  ],
+  "narracao": {
+    "voz": "cadu",
+    "velocidade": 1.2,
+    "vol": 1.0,
+    "atraso": 0.15,
+    "efeito": "cinema",
+    "tom": 0.89,
+    "pronuncia": {
+      "@esefossevoceai": "É Se Fosse Você Aí"
+    },
+    "extras": [
+      {
+        "t": 64.4,
+        "ate": 70,
+        "fala": "Caçar à noite, ou plantar e racionar? Comenta A ou B."
+      }
+    ],
+    "pausa": 0.12
+  },
+  "sounds": [
+    {
+      "t": 0,
+      "sfx": "vento",
+      "vol": 0.3
+    },
+    {
+      "t": 0,
+      "sfx": "passaros",
+      "vol": 0.4
+    },
+    {
+      "t": 0,
+      "sfx": "lofi",
+      "vol": 0.55,
+      "dur": 37,
+      "fadeOut": 4
+    },
+    {
+      "t": 2.7,
+      "sfx": "whoosh",
+      "vol": 0.25
+    },
+    {
+      "t": 17.3,
+      "sfx": "whoosh",
+      "vol": 0.3
+    },
+    {
+      "t": 22,
+      "sfx": "martelo",
+      "vol": 0.5
+    },
+    {
+      "t": 28,
+      "sfx": "martelo",
+      "vol": 0.35
+    },
+    {
+      "t": 0,
+      "sfx": "fogueira",
+      "vol": 0.35
+    },
+    {
+      "t": 37,
+      "sfx": "trilha",
+      "vol": 0.8,
+      "dur": 27
+    },
+    {
+      "t": 38,
+      "sfx": "grilos",
+      "vol": 0.35
+    },
+    {
+      "t": 39.5,
+      "sfx": "grunhido",
+      "vol": 0.8
+    },
+    {
+      "t": 41.2,
+      "sfx": "grunhido",
+      "vol": 0.7
+    },
+    {
+      "t": 42.4,
+      "sfx": "impacto",
+      "vol": 0.6
+    },
+    {
+      "t": 43.8,
+      "sfx": "grunhido",
+      "vol": 0.85
+    },
+    {
+      "t": 46.1,
+      "sfx": "grunhido",
+      "vol": 0.7
+    },
+    {
+      "t": 48,
+      "sfx": "coracao",
+      "vol": 0.7
+    },
+    {
+      "t": 54.3,
+      "sfx": "whoosh",
+      "vol": 0.5
+    },
+    {
+      "t": 54.4,
+      "sfx": "tensao",
+      "vol": 0.6
+    },
+    {
+      "t": 64,
+      "sfx": "impacto",
+      "vol": 0.8
+    }
+  ],
+  "post": {
+    "canal": "@esefossevoceai",
+    "titulo": "Os seguidores chegaram (Parte 2)",
+    "descricao": "Parte 2 🌲🧟 46 seguidores viraram moradores e a paliçada subiu! Mas a comida acaba em 3 dias… Comenta seu NOME + FUNÇÃO e vota A ou B 👇 #apocalipsezumbi #oquevocefaria #pov #parte2 #AComunidade",
+    "comentario_fixado": "🍖 PARTE 3 — comenta assim:\nNOME + FUNÇÃO + A ou B\nA) Caçadores saem à noite pra caçar\nB) Plantar uma horta e racionar\nOs comentários mais curtidos viram moradores!"
+  }
+}

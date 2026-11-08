@@ -48,6 +48,18 @@ export function makePeopleKit(THREE) {
     painel(h) { const g = new THREE.Group(); add(g, box(0.05, 0.02, 0.25), '#c0c0c0', 0, -0.06, 0.08); h.add(g); return g; },
     roupa(h) { const g = new THREE.Group(); add(g, box(0.35, 0.4, 0.01), '#e0a4b8', 0.1, -0.15, 0.04); h.add(g); return g; },
     milho(h) { const g = new THREE.Group(); add(g, box(0.05, 0.05, 0.05), '#f1c40f', 0, -0.06, 0.04); h.add(g); return g; },
+    // ---- equipamento das funções (mão direita, cabo apontando para a frente) ----
+    machado(h) { const g = new THREE.Group(); add(g, cyl(0.02, 0.022, 0.78, 5), '#7a5233', 0, -0.06, 0.28, { rot: [Math.PI / 2, 0, 0] }); add(g, box(0.03, 0.2, 0.13), '#8f969c', 0, -0.13, 0.62); add(g, box(0.035, 0.05, 0.05), '#5d6166', 0, -0.02, 0.62); h.add(g); return g; },
+    picareta(h) { const g = new THREE.Group(); add(g, cyl(0.02, 0.022, 0.8, 5), '#7a5233', 0, -0.06, 0.3, { rot: [Math.PI / 2, 0, 0] }); add(g, box(0.035, 0.5, 0.05), '#6c7278', 0, -0.06, 0.66, { rot: [0, 0, 0] }); add(g, box(0.03, 0.06, 0.08), '#6c7278', 0, 0.2, 0.69); add(g, box(0.03, 0.06, 0.08), '#6c7278', 0, -0.32, 0.69); h.add(g); return g; },
+    espada(h) { const g = new THREE.Group(); add(g, box(0.035, 0.035, 0.18), '#3b2a1a', 0, -0.06, 0.02); add(g, box(0.2, 0.03, 0.03), '#b08d3c', 0, -0.06, 0.12); add(g, box(0.05, 0.012, 0.85), '#d7dde2', 0, -0.06, 0.55); h.add(g); return g; },
+    facao(h) { const g = new THREE.Group(); add(g, box(0.035, 0.035, 0.14), '#2b2b2b', 0, -0.06, 0.02); add(g, box(0.07, 0.012, 0.5), '#c3c9ce', 0, -0.06, 0.34); h.add(g); return g; },
+    lanca(h) { const g = new THREE.Group(); add(g, cyl(0.02, 0.022, 2.0, 5), '#7a5233', 0, -0.05, 0.1, { rot: [0.1, 0, 0] }); add(g, cyl(0.001, 0.045, 0.22, 4), '#c3c9ce', 0, 1.05, 0.2, { rot: [0.1, 0, 0] }); h.add(g); return g; },
+    rifle(h) { const g = new THREE.Group(); add(g, box(0.06, 0.1, 0.32), '#4a3322', 0, -0.06, -0.12); add(g, box(0.05, 0.07, 0.42), '#2a2d30', 0, -0.03, 0.22); add(g, cyl(0.016, 0.016, 0.42, 6), '#1c1e20', 0, -0.0, 0.62, { rot: [Math.PI / 2, 0, 0] }); add(g, box(0.03, 0.12, 0.04), '#1c1e20', 0, -0.11, 0.12); h.add(g); return g; },
+    maleta(h) { const g = new THREE.Group(); add(g, box(0.32, 0.22, 0.12), '#f2f2f2', 0, -0.14, 0); add(g, box(0.06, 0.16, 0.13), '#d0281f', 0, -0.14, 0); add(g, box(0.16, 0.06, 0.13), '#d0281f', 0, -0.14, 0); h.add(g); return g; },
+    tora(h) { const g = new THREE.Group(); add(g, cyl(0.12, 0.13, 1.9, 7), '#7a5233', 0.05, 0.25, 0.1, { rot: [0, 0, Math.PI / 2] }); h.add(g); return g; },
+    // ---- mão esquerda ----
+    arco(h) { const g = new THREE.Group(); for (const sg of [1, -1]) add(g, cyl(0.014, 0.018, 0.62, 5), '#6b4a2e', 0, -0.05 + sg * 0.3, 0.06 + 0.07, { rot: [-sg * 0.32, 0, 0] }); add(g, cyl(0.004, 0.004, 1.1, 3), '#e8e1d6', 0, -0.05, 0.02); h.add(g); return g; },
+    escudo(h) { const g = new THREE.Group(); add(g, cyl(0.3, 0.3, 0.05, 10), '#6b4a2e', -0.06, -0.08, 0.04, { rot: [0, 0, Math.PI / 2] }); add(g, cyl(0.08, 0.08, 0.07, 8), '#8f969c', -0.09, -0.08, 0.04, { rot: [0, 0, Math.PI / 2] }); h.add(g); return g; },
   };
   function guitar(chest) {
     const g = new THREE.Group();
@@ -84,6 +96,9 @@ export function makePeopleKit(THREE) {
     if (s.apron) add(spine, box(0.3 * bw, 0.62, 0.02), s.apron, 0, 0.12, 0.112 * bw, C());
     if (s.top === 'moletom') add(spine, box(0.24, 0.14, 0.1), s.topColor, 0, 0.46, -0.12, C());
     if (s.backpack) { add(spine, box(0.3, 0.38, 0.14), s.backpack, 0, 0.25, -0.17, C()); }
+    if (s.colete) { add(spine, cyl(0.218 * bw, 0.18 * bw, 0.4, 6, 0.27), s.colete, 0, 0, 0, { ...C(), scale: [1.12, 1, 0.66] }); for (const x of [-0.09, 0.09]) add(spine, box(0.08, 0.1, 0.04), s.colete, x, 0.18, 0.13 * bw, C()); }
+    if (s.aljava) { const q = add(spine, cyl(0.07, 0.06, 0.55, 7), '#6b4a2e', 0.08, 0.3, -0.17, { ...C(), rot: [0.25, 0, -0.35] }); for (let i = 0; i < 4; i++) add(q, cyl(0.006, 0.006, 0.18, 3), '#e8e1d6', (i - 1.5) * 0.025, 0.33, 0); }
+    if (s.cinto) { add(hips, box(0.38 * bw, 0.07, 0.24 * bw), '#5a3a22', 0, 0.05, 0, C()); add(hips, box(0.09, 0.1, 0.06), '#7a5233', 0.13, -0.02, 0.1, C()); }
     if (s.scarf) add(spine, cyl(0.1, 0.12, 0.08, 8, 0), s.scarf, 0, 0.5, 0, C());
     // cabeça
     const neck = J(spine, 0, 0.5, 0);
@@ -117,6 +132,9 @@ export function makePeopleKit(THREE) {
       if (hat === 'gorro') add(head, sph(0.13, 10, 6, Math.PI * 0.55), hcol, 0, 0.13, -0.01, { scale: [1, 1.15, 1.05] });
       if (hat === 'bandana') add(head, cyl(0.124, 0.124, 0.05, 10), hcol, 0, 0.18, 0);
       if (hat === 'capacete') add(head, sph(0.14, 10, 6, Math.PI * 0.5), '#e1b12c', 0, 0.15, 0);
+      if (hat === 'chef') { add(head, cyl(0.12, 0.115, 0.16, 10), '#f4f4f4', 0, 0.24, 0); add(head, ico(0.15, 1), '#ffffff', 0, 0.36, 0, { scale: [1, 0.6, 1] }); }
+      if (hat === 'mineiro') { add(head, sph(0.142, 10, 6, Math.PI * 0.5), '#e1b12c', 0, 0.15, 0); add(head, cyl(0.035, 0.035, 0.04, 8), '#222', 0, 0.22, 0.125, { rot: [Math.PI / 2, 0, 0] }); add(head, cyl(0.026, 0.026, 0.012, 8), '#fff6c0', 0, 0.22, 0.147, { rot: [Math.PI / 2, 0, 0], mat: new THREE.MeshBasicMaterial({ color: new THREE.Color(3, 2.8, 2) }) }); }
+      if (hat === 'militar') { add(head, sph(0.145, 10, 6, Math.PI * 0.5), '#4b5d3a', 0, 0.14, 0, { scale: [1.05, 0.95, 1.1] }); add(head, cyl(0.17, 0.17, 0.012, 10), '#4b5d3a', 0, 0.15, 0.01); }
       if (s.headphones) { add(head, box(0.26, 0.025, 0.04), '#222', 0, 0.245, 0); for (const x of [-0.125, 0.125]) add(head, cyl(0.045, 0.045, 0.04, 8), '#333', x, 0.12, 0, { rot: [0, 0, Math.PI / 2] }); }
     }
     // braços
@@ -145,7 +163,8 @@ export function makePeopleKit(THREE) {
       legs[side] = { hp, kn };
     }
     // ferramenta
-    let tool = null;
+    let tool = null, toolL = null;
+    if (s.toolL && TOOLS[s.toolL]) toolL = TOOLS[s.toolL](arms.L.hand);
     if (s.tool === 'violao') tool = guitar(spine);
     else if (s.tool && TOOLS[s.tool]) tool = TOOLS[s.tool](arms.R.hand);
     const joints = { root, body, hips, spine, neck, head, ...Object.fromEntries(Object.entries(arms).flatMap(([k, v]) => [[`sh${k}`, v.sh], [`el${k}`, v.el], [`hand${k}`, v.hand]])), ...Object.fromEntries(Object.entries(legs).flatMap(([k, v]) => [[`hip${k}`, v.hp], [`kn${k}`, v.kn]])) };
@@ -208,6 +227,16 @@ export const ANIM = {
   painel: (t) => ({ rootY: -0.45, hipL: -1.7, hipR: -1.7, knL: 2.4, knR: 2.4, spineX: 0.5, shLx: -1.3, shRx: -1.2 + 0.2 * S(t * 4), elL: -0.4, elR: -0.5, headX: 0.45 }),
   alimentar: (t) => { const c = (t * 0.7) % 1, th = c > 0.7; return { shLx: -1.0, elL: -1.4, shLz: -0.2, shRx: th ? -1.6 : -0.6, shRz: th ? -0.5 : -0.15, elR: th ? -0.2 : -0.9, headX: 0.3, spineX: 0.1 }; },
   fantasma: (t, ph) => ({ ...ANIM.parado(t, ph), shLz: 0.18, shRz: -0.18 }),
+  machadar(t, ph) { const c = (t * 0.85 + ph) % 1, a = c < 0.65 ? sm(0, 0.65, c) : 1 - sm(0.65, 0.78, c);
+    return { spineY: -0.5 + 0.9 * (1 - a), spineX: 0.15, shRx: -0.9 - 1.0 * a, shRz: -0.6 * a, elR: -0.6, shLx: -1.1 - 0.6 * a, shLz: -0.2, elL: -0.5, hipL: -0.2, hipR: 0.15, knL: 0.2, headY: 0.2 }; },
+  picaretar(t, ph) { const c = (t * 0.7 + ph) % 1, a = c < 0.7 ? sm(0, 0.7, c) : 1 - sm(0.7, 0.8, c);
+    return { spineX: 0.3 + 0.25 * (1 - a), shRx: -0.6 - 2.1 * a, shLx: -0.7 - 2.0 * a, shRz: 0.1, shLz: -0.1, elR: -0.4, elL: -0.4, hipL: -0.25, knL: 0.25, headX: 0.25 }; },
+  guarda: (t, ph) => ({ spineX: 0.08, shRx: -0.75, elR: -0.9, shRz: -0.1, shLx: -0.6, shLz: -0.15, elL: -1.4, hipL: -0.3, knL: 0.35, hipR: 0.2, knR: 0.15, headY: 0.35 * Math.sin(t * 0.6 + ph), rootY: -0.04 + 0.01 * Math.sin(t * 1.5 + ph) }),
+  lanca: (t, ph) => ({ spineX: 0.05, shRx: -0.35, elR: -1.0, shRz: -0.12, shLz: 0.15, hipL: -0.2, knL: 0.2, headY: 0.3 * Math.sin(t * 0.5 + ph) }),
+  lutar: (t, ph) => { const b = Math.sin(t * 6 + ph); return { spineX: 0.15, shRx: -1.3 + 0.15 * b, elR: -1.9, shLx: -1.4 - 0.15 * b, elL: -1.9, shLz: -0.2, shRz: 0.2, hipL: -0.35, knL: 0.4, hipR: 0.25, rootY: 0.02 * Math.abs(b) - 0.03, headX: 0.1 }; },
+  mirar: (t, ph) => ({ spineY: -0.5, shLx: -1.55, shLz: -0.15, elL: -0.05, shRx: -1.45, shRz: 0.65, elR: -2.1, headY: 0.45, headX: -0.05 + 0.02 * Math.sin(t * 3 + ph), hipL: -0.2, hipR: 0.2 }),
+  fuzil: (t, ph) => ({ spineX: 0.05, shRx: -1.0, elR: -1.3, shRz: 0.1, shLx: -1.25, shLz: -0.45, elL: -0.9, headY: 0.4 * Math.sin(t * 0.5 + ph), hipL: -0.2, knL: 0.2 }),
+  carregarTora: (t, ph, f = 0.85) => ({ ...ANIM.andar(t, ph, f), shRx: -2.6, shRz: -0.1, elR: -1.9, shLx: -0.35, spineX: 0.1, spineZ: 0.08 }),
   olhar: (t, ph) => ({ ...ANIM.parado(t, ph), headY: 0.9 * Math.sin(t * 0.9), spineY: 0.25 * Math.sin(t * 0.9), headX: -0.1, shLz: 0.25, shRz: -0.25, elL: -1.6, elR: -1.6, shLx: -0.3, shRx: -0.3 }),
   assustado: (t, ph) => ({ spineX: -0.15, shLx: -1.2, shRx: -1.2, shLz: -0.3, shRz: 0.3, elL: -1.2, elR: -1.2, hipL: -0.35, knL: 0.4, hipR: 0.25, headX: -0.15 + 0.04 * Math.sin(t * 9), headY: 0.35 * Math.sin(t * 1.3) }),
   apontar: (t, ph) => ({ ...ANIM.parado(t, ph), shRx: -1.5, shRz: -0.1, elR: -0.05, headY: -0.15 }),
@@ -215,3 +244,35 @@ export const ANIM = {
     return { hipL: -0.35 * S(p), hipR: 0.18 * S(p), knL: 0.5 * Math.max(0, S(p + 1.3)), knR: 0.25 * Math.max(0, S(p + 1.3 + Math.PI)), spineX: 0.3, spineZ: 0.15 * S(p * 0.5),
       shLx: -1.45 + 0.15 * S(p * 1.7), shRx: -1.5 + 0.15 * S(p * 1.3 + 1), shLz: -0.1, shRz: 0.1, elL: -0.2, elR: -0.3, headX: 0.35, headZ: 0.3 * S(ph) + jerk, rootY: 0.03 * Math.abs(Math.cos(p)) }; },
 };
+
+// ---------------- papéis (função comentada -> visual + equipamento + animação) ----------------
+export const PAPEIS = {
+  cacador:     { rotulo: 'Caçador',     v: { hat: 'bandana', hatColor: '#556b2f', topColor: '#556b2f', top2: '#4a3b2a', pants: '#4a3b2a', aljava: true, toolL: 'arco' }, anim: 'parado', noite: 'mirar' },
+  arqueiro:    { rotulo: 'Arqueiro',    v: { hat: 'bone', hatColor: '#2c3e50', topColor: '#2e4053', aljava: true, toolL: 'arco' }, anim: 'parado', noite: 'mirar' },
+  construtor:  { rotulo: 'Construtor',  v: { hat: 'capacete', colete: '#e67e22', cinto: true, tool: 'martelo' }, anim: 'martelar', noite: 'parado' },
+  lenhador:    { rotulo: 'Lenhador',    v: { hat: 'gorro', hatColor: '#b03a2e', topColor: '#b03a2e', top: 'manga_longa', beard: true, tool: 'machado' }, anim: 'machadar', noite: 'parado' },
+  guardiao:    { rotulo: 'Guardião',    v: { colete: '#2c3e50', topColor: '#34495e', tool: 'lanca', toolL: 'escudo' }, anim: 'lanca', noite: 'lanca' },
+  espadachim:  { rotulo: 'Espadachim',  v: { hat: 'bandana', hatColor: '#1b2631', colete: '#5d4e37', tool: 'espada', toolL: 'escudo' }, anim: 'guarda', noite: 'guarda' },
+  lutador:     { rotulo: 'Lutador',     v: { hat: 'bandana', hatColor: '#c0392b', top: 'regata', topColor: '#1b2631' }, anim: 'lutar', noite: 'lutar' },
+  militar:     { rotulo: 'Militar',     v: { hat: 'militar', colete: '#4b5d3a', topColor: '#556b2f', pants: '#4b5d3a', shoes: '#1a1a1a', tool: 'rifle' }, anim: 'fuzil', noite: 'fuzil' },
+  cozinheiro:  { rotulo: 'Cozinheiro',  v: { hat: 'chef', apron: '#f2f2f2', tool: 'concha' }, anim: 'mexer', noite: 'mexer' },
+  agricultor:  { rotulo: 'Agricultor',  v: { hat: 'chapeu', tool: 'enxada' }, anim: 'capinar', noite: 'parado' },
+  minerador:   { rotulo: 'Minerador',   v: { hat: 'mineiro', colete: '#7f8c8d', tool: 'picareta' }, anim: 'picaretar', noite: 'parado' },
+  medico:      { rotulo: 'Médico',      v: { coat: true, tool: 'maleta' }, anim: 'parado', noite: 'parado' },
+  ajudante:    { rotulo: 'Ajudante',    v: { hat: 'bone', tool: 'tora' }, anim: 'carregarTora', noite: 'parado' },
+  criador:     { rotulo: 'Criador',     v: { hat: 'chapeu', tool: 'milho' }, anim: 'alimentar', noite: 'parado' },
+  morador:     { rotulo: 'Morador',     v: {}, anim: 'parado', noite: 'sentado' },
+};
+// traduz o que a pessoa escreveu ("quero ser o matador de zumbis") para um papel
+export function funcaoParaPapel(txt = '') {
+  const t = txt.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  const regras = [
+    [/arque/, 'arqueiro'], [/caca|caçad/, 'cacador'], [/lenha/, 'lenhador'], [/constru|contru/, 'construtor'],
+    [/espad/, 'espadachim'], [/luta|atacant/, 'lutador'], [/atirad|militar|armeir|soldad|selva/, 'militar'],
+    [/guard|protet|proteg|matador|mata de zumbi|guardi/, 'guardiao'], [/cozin|chef|comida/, 'cozinheiro'],
+    [/plant|cultiv|agric|horta|jardin/, 'agricultor'], [/miner/, 'minerador'], [/medic/, 'medico'],
+    [/ajudan/, 'ajudante'], [/criad/, 'criador'],
+  ];
+  for (const [re, p] of regras) if (re.test(t)) return p;
+  return 'morador';
+}

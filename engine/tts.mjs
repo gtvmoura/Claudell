@@ -6,6 +6,8 @@
 //     "velocidade": 1.0,         // >1 fala mais rápido
 //     "vol": 1.0,
 //     "atraso": 0.15,            // segundos depois do início da legenda
+//     "efeito": "cinema",        // voz de trailer: mais grave, encorpada, com ambiente
+//     "tom": 0.89,               // fator de tom (0,89 ≈ 2 semitons mais grave)
 //     "pronuncia": { "@esefossevoceai": "É se fosse você aí" }
 //   }
 //   Em cada legenda: "fala": "texto falado" (opcional; padrão = o texto da legenda) ou "fala": false (sem narração).
@@ -54,14 +56,14 @@ export function narrar(script) {
     const key = crypto.createHash('sha1').update(JSON.stringify([cfg.voz, vel, text])).digest('hex').slice(0, 16);
     const file = path.join(TTS_DIR, `${key}.wav`);
     if (!fs.existsSync(file)) {
-      const r = spawnSync('python3', ['-m', 'piper', '-m', model, '-f', file, '--length-scale', String(1 / vel), '--sentence-silence', '0.25'], { input: text, encoding: 'utf8' });
+      const r = spawnSync('python3', ['-m', 'piper', '-m', model, '-f', file, '--length-scale', String(1 / vel), '--sentence-silence', String(cfg.pausa ?? 0.25)], { input: text, encoding: 'utf8' });
       if (r.status !== 0 || !fs.existsSync(file)) throw new Error('Piper falhou: ' + (r.stderr || '').slice(-400));
       console.log(`  voz -> ${text}`);
     }
     const dur = duracao(file);
     const t = cap.start + (cap.atraso ?? cfg.atraso ?? 0.15);
     if (t + dur > cap.end + 0.4) console.warn(`  ⚠ fala mais longa que a legenda (${dur.toFixed(1)} s em ${(cap.end - cap.start).toFixed(1)} s): "${text}"`);
-    out.push({ t, file, dur, vol: cap.vol ?? cfg.vol ?? 1, text });
+    out.push({ t, file, dur, vol: cap.vol ?? cfg.vol ?? 1, text, efeito: cfg.efeito, tom: cfg.tom });
   }
   return out;
 }

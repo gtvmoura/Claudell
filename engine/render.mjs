@@ -138,7 +138,10 @@ const ff = (args) => { const r = spawnSync('ffmpeg', ['-hide_banner', '-loglevel
     inputs.push('-i', v.file);
     const { chain, delay } = place(v.t - start, null, 0);
     // voz: 48 kHz estéreo, sem graves embolados, comprimida e com leve "presença"
-    chain.push('aresample=48000', 'aformat=channel_layouts=stereo', 'highpass=f=90', 'acompressor=threshold=0.12:ratio=3:attack=5:release=90', 'equalizer=f=3000:t=q:w=1.2:g=3', `volume=${(v.vol * 2.6).toFixed(2)}`);
+    chain.push('aresample=48000', 'aformat=channel_layouts=stereo');
+    if (v.efeito === 'cinema') // voz de trailer: tom mais grave, corpo nos graves, presença, compressão e um pouco de sala
+      chain.push(`rubberband=pitch=${v.tom ?? 0.89}:formant=shifted`, 'highpass=f=60', 'equalizer=f=140:t=q:w=1.0:g=4', 'equalizer=f=3200:t=q:w=1.2:g=3', 'acompressor=threshold=0.08:ratio=4:attack=5:release=120:makeup=2', 'aecho=0.8:0.6:45|85:0.14|0.08', `volume=${(v.vol * 2.2).toFixed(2)}`);
+    else chain.push('highpass=f=90', 'acompressor=threshold=0.12:ratio=3:attack=5:release=90', 'equalizer=f=3000:t=q:w=1.2:g=3', `volume=${(v.vol * 2.6).toFixed(2)}`);
     if (delay) chain.push(`adelay=${delay}|${delay}`);
     filters.push(`[${i}:a]${chain.join(',')}[v${k}]`);
   });

@@ -7,7 +7,7 @@
 //   cidadaos: [...]                -> moradores / vagas-fantasma (mesmo formato da cena "comunidade")
 //   zumbis: { n, aparece, raioIni, raioFim, setor: [grausIni, grausFim] }
 //   events: bandeira, fogo, planta_on, planta_off
-import { makePeopleKit, ANIM, SKINS, HAIR_COLORS, CLOTHES, PANTS, HATS, TOPS } from '../lib/people.js';
+import { makePeopleKit, ANIM, SKINS, HAIR_COLORS, CLOTHES, PANTS, HATS, TOPS, PAPEIS, funcaoParaPapel } from '../lib/people.js';
 
 export async function build({ THREE, renderer, scene, camera, script, events, helpers }) {
   const { rng, clamp, lerp, smooth } = helpers;
@@ -127,11 +127,15 @@ export async function build({ THREE, renderer, scene, camera, script, events, he
 
   // ---------------- bandeira + fogueira ----------------
   const flag = new THREE.Group(); flag.position.set(1.4, 0, 1.2); scene.add(flag);
-  const flagCloth = (() => {
+  const flagTex = pop => {
     const cv = document.createElement('canvas'); cv.width = 256; cv.height = 160; const g = cv.getContext('2d');
     g.fillStyle = '#ffd400'; g.fillRect(0, 0, 256, 160); g.fillStyle = '#111'; g.font = '900 27px Montserrat'; g.textAlign = 'center';
-    g.fillText('A COMUNIDADE', 128, 66); g.font = '900 44px Montserrat'; g.fillText(`POP. ${script.populacao ?? 1}`, 128, 122);
-    const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace;
+    g.fillText('A COMUNIDADE', 128, 66); g.font = '900 44px Montserrat'; g.fillText(`POP. ${pop}`, 128, 122);
+    const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return t;
+  };
+  const flagKeys = (script.bandeira || [[0, script.populacao ?? 1]]).map(([tt, pop]) => [tt, flagTex(pop)]);
+  const flagCloth = (() => {
+    const t = flagKeys[0][1];
     const geo = new THREE.PlaneGeometry(1.5, 0.95, 10, 4); geo.translate(0.75, 0, 0);
     const m = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ map: t, side: THREE.DoubleSide })); m.castShadow = true; return m;
   })();
@@ -153,10 +157,27 @@ export async function build({ THREE, renderer, scene, camera, script, events, he
   add(gear, box(0.8, 0.12, 1.9), '#2e5a8a', -3.6, 0.06, -0.2, { rot: [0, 0.4, 0] });
 
   // ---------------- planta holográfica da comunidade futura (só madeira, na floresta) ----------------
+  const palLogs = []; // { meshes, ordem 0..1 (do portão para os fundos) }
   ((scene) => { // paliçada de troncos com portão ao sul
     const n = 150;
-    for (let i = 0; i < n; i++) { const a = i / n * 6.28, x = Math.sin(a) * 16, z = Math.cos(a) * 16; if (Math.abs(x) < 2 && z > 0) continue; add(scene, cyl(0.17, 0.2, 3.0 + (i % 3) * 0.25, 6, 1.5), '#7a5233', x, 0, z); add(scene, cyl(0.001, 0.17, 0.4, 6, 0.2), '#7a5233', x, 3.0 + (i % 3) * 0.25, z); }
+    for (let i = 0; i < n; i++) { const a = i / n * 6.28, x = Math.sin(a) * 16, z = Math.cos(a) * 16; if (Math.abs(x) < 2 && z > 0) continue;
+      const h = 3.0 + (i % 3) * 0.25, m1 = add(scene, cyl(0.17, 0.2, h, 6, 1.5), '#7a5233', x, 0, z), m2 = add(scene, cyl(0.001, 0.17, 0.4, 6, 0.2), '#7a5233', x, h, z);
+      m1.receiveShadow = true;
+      const ang = Math.abs(Math.atan2(Math.sin(a), Math.cos(a))); palLogs.push({ meshes: [m1, m2], ordem: ang / Math.PI, h }); }
+    // portão de toras (duas folhas abertas para dentro)
+    for (const sx of [-1, 1]) { const g = new THREE.Group(); g.position.set(sx * 2, 0, 15.9); g.rotation.y = sx * 1.2; for (let k = 0; k < 6; k++) add(g, cyl(0.16, 0.18, 2.8, 6, 1.4), '#6b4a2e', -sx * (0.2 + k * 0.33), 0, 0); add(g, box(2.1, 0.15, 0.12), '#5a3a22', -sx * 1.0, 2.2, 0.15); add(g, box(2.1, 0.15, 0.12), '#5a3a22', -sx * 1.0, 0.8, 0.15); scene.add(g); palLogs.push({ meshes: [g], ordem: 1.01, h: 2.8, portao: g, sx }); }
   })(at('palicada'));
+  // tochas no portão (acendem à noite)
+  const torches = [];
+  const torchLight = new THREE.PointLight(0xff9a4a, 0, 14, 1.6); torchLight.position.set(0, 3.0, 15.2); scene.add(torchLight);
+  ((scene) => { for (const sx of [-1, 1]) { add(scene, cyl(0.06, 0.08, 3.4, 5, 1.7), '#4a3220', sx * 2.6, 0, 15.4); const f = new THREE.Mesh(new THREE.SphereGeometry(0.16, 8, 6), new THREE.MeshBasicMaterial({ color: new THREE.Color(0.2, 0.1, 0.05) })); f.position.set(sx * 2.6, 3.5, 15.4); scene.add(f); torches.push(f); } })(at('palicada'));
+  // ---- extras do acampamento (script.construido): roça, pedreira, panela, caixas de comida, tocos ----
+  const crates = [];
+  ((scene) => { for (let r = 0; r < 4; r++) add(scene, box(4.2, 0.18, 0.7), '#5b4128', 8.6, 0.09, 4.2 + r * 1.1); for (let i = 0; i < 24; i++) add(scene, ico(0.16, 0), '#4c8a2f', 6.8 + (i % 6) * 0.7, 0.28, 4.2 + Math.floor(i / 6) * 1.1); })(at('roca'));
+  ((scene) => { for (const [x, z, sc] of [[-9.5, -5, 1.2], [-10.6, -3.8, 0.9], [-8.6, -6.2, 0.8], [-10.2, -6.4, 1.0], [-11.2, -5.2, 0.7]]) add(scene, new THREE.DodecahedronGeometry(sc, 0), '#8a8780', x, sc * 0.55, z); })(at('pedreira'));
+  ((scene) => { for (let i = 0; i < 3; i++) { const a = i * 2.094; add(scene, cyl(0.025, 0.025, 1.5, 4, 0.75), '#3a3a3a', FIRE.x + Math.cos(a) * 0.55, 0, FIRE.z + Math.sin(a) * 0.55, { rot: [Math.sin(a) * 0.35, 0, -Math.cos(a) * 0.35] }); } add(scene, cyl(0.24, 0.2, 0.3, 8, 0), '#2b2b2b', FIRE.x, 0.95, FIRE.z); })(at('panela'));
+  ((scene) => { for (let i = 0; i < 9; i++) crates.push(add(scene, box(0.6, 0.45, 0.45), ['#9c7a4f', '#8a6a42', '#a8875a'][i % 3], 3.6 + (i % 3) * 0.66, 0.23 + Math.floor(i / 3) * 0.46, -1.6 + (i % 2) * 0.05, { rot: [0, (i % 3) * 0.1, 0] })); })(at('comida'));
+  ((scene) => { for (let i = 0; i < 14; i++) { const a = 0.9 + i * 0.32, r = 20.5 + (i % 3) * 1.4; add(scene, cyl(0.3, 0.36, 0.45, 7, 0.22), '#7a5233', Math.sin(a) * r, 0, Math.cos(a) * r); } })(at('tocos'));
   ((scene) => { // torre de vigia
     const T = new THREE.Group(); T.position.set(3.5, 0, 15.2);
     for (const [px, pz] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) add(T, cyl(0.12, 0.14, 6, 5, 3), '#6b4a2e', px, 0, pz);
@@ -179,6 +200,12 @@ export async function build({ THREE, renderer, scene, camera, script, events, he
   const bpMat = new THREE.MeshBasicMaterial({ color: 0x5fd4ff, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false });
   futuro.traverse(o => { if (o.isMesh) { o.material = bpMat; o.castShadow = false; o.receiveShadow = false; } });
   futuro.visible = true; // visível até o 1º update (pré-compilação = determinismo)
+
+  // ---------------- sinalizador vermelho ao longe (alguém viu a fumaça) ----------------
+  const flarePos = new THREE.Vector3(...(script.sinalizador?.pos || [-70, 0, -120]));
+  const flare = new THREE.Mesh(new THREE.SphereGeometry(1.2, 10, 8), new THREE.MeshBasicMaterial({ color: new THREE.Color(8, 1.2, 0.6) }));
+  const FTR = 26, flareTrail = new THREE.Points(new THREE.BufferGeometry().setAttribute('position', new THREE.BufferAttribute(new Float32Array(FTR * 3), 3)), new THREE.PointsMaterial({ size: 3.5, color: 0xff6040, transparent: true, opacity: 0.55, depthWrite: false, blending: THREE.AdditiveBlending, map: flameMap }));
+  flareTrail.frustumCulled = false; scene.add(flare, flareTrail);
 
   // ---------------- pessoas ----------------
   const pick = (arr, r) => arr[Math.floor(r() * arr.length)];
@@ -206,10 +233,16 @@ export async function build({ THREE, renderer, scene, camera, script, events, he
   }
   const people = [];
   for (const c of script.cidadaos || []) {
-    const vis = { ...randomVisual(c.seed ?? people.length + 1), ...(c.visual || {}) };
+    const papel = c.vaga ? null : PAPEIS[c.papel || funcaoParaPapel(c.funcao)] || PAPEIS.morador;
+    const vis = { ...randomVisual(c.seed ?? people.length + 1), ...(papel?.v || {}), ...(c.visual || {}) };
     if (c.vaga) Object.assign(vis, { ghost: true, hat: null, backpack: false });
+    c._anim = c.acao || papel?.anim || 'parado'; c._noite = c.noite || papel?.noite || null;
+    if (!c.funcao && papel) c.funcao = papel.rotulo;
     const p = kit.makePerson(vis); p.root.position.set(c.pos[0], 0, c.pos[1]); p.root.rotation.y = (c.yaw ?? 0) * DEG; scene.add(p.root);
-    people.push({ c, p, ph: R() * 6.28 });
+    // chegada: anda de c.de (na trilha) até a entrada da clareira e depois até c.pos
+    let path = null;
+    if (c.chega != null) { const pts = [c.de || [0, 30], [0.3, 15.5], c.pos]; const segs = []; let L = 0; for (let k = 1; k < pts.length; k++) { const d = Math.hypot(pts[k][0] - pts[k - 1][0], pts[k][1] - pts[k - 1][1]); segs.push([pts[k - 1], pts[k], L, d]); L += d; } path = { segs, L, v: c.vel ?? 2.2 }; }
+    people.push({ c, p, ph: R() * 6.28, path });
   }
   // zumbis saindo da mata
   const Z = script.zumbis || { n: 0 };
@@ -225,6 +258,7 @@ export async function build({ THREE, renderer, scene, camera, script, events, he
 
   // ---------------- update ----------------
   const since = id => t => events.since(id, t);
+  const valorMedidor = t => { const K = script.medidor.keys; if (t <= K[0][0]) return K[0][1]; for (let i = 1; i < K.length; i++) if (t <= K[i][0]) return lerp(K[i - 1][1], K[i][1], (t - K[i - 1][0]) / (K[i][0] - K[i - 1][0])); return K[K.length - 1][1]; };
   const tFlag = since('bandeira'), tFire = since('fogo'), tPOn = since('planta_on'), tPOff = since('planta_off');
   const V = new THREE.Vector3(), HEADP = new THREE.Vector3();
   const labels = [];
@@ -268,6 +302,19 @@ export async function build({ THREE, renderer, scene, camera, script, events, he
       for (let i = 0; i < fa.count; i++) { const x0 = flagBase[i * 3]; fa.setZ(i, Math.sin(x0 * 3.2 - t * 5) * 0.12 * x0); }
       fa.needsUpdate = true; flagCloth.geometry.computeVertexNormals();
 
+      { const nk = smooth(0, 1.2, events.since('noite', t)); torchLight.intensity = has('palicada') ? nk * (9 + 2 * Math.sin(t * 11)) : 0; torches.forEach((f, i) => f.material.color.setRGB(lerp(0.2, 4.0, nk) * (0.85 + 0.15 * Math.sin(t * 13 + i)), lerp(0.1, 1.8, nk), lerp(0.05, 0.4, nk))); }
+      // ---- placar da bandeira ----
+      { let tex = flagKeys[0][1]; for (const [tt, tx] of flagKeys) if (t >= tt) tex = tx; if (flagCloth.material.map !== tex) { flagCloth.material.map = tex; flagCloth.material.needsUpdate = true; } }
+      // ---- paliçada sendo construída (do portão para os fundos) ----
+      const ob = script.obras?.palicada;
+      { const nk = smooth(0, 2.5, events.since('noite', t)); for (const L of palLogs) if (L.portao) L.portao.rotation.y = L.sx * 1.2 * (1 - nk); } // portão fecha à noite
+      if (ob && has('palicada')) for (const L of palLogs) { const tt = ob[0] + (ob[1] - ob[0]) * Math.min(1, L.ordem); const k = smooth(tt, tt + 0.5, t); for (const m of L.meshes) { m.visible = k > 0.001; m.scale.y = Math.max(0.001, k); } }
+      // ---- caixas de comida diminuindo (acompanha script.medidor) ----
+      if (crates.length && script.medidor) { const v = valorMedidor(t); crates.forEach((c, i) => { c.visible = i < Math.round(v * crates.length); }); }
+      // ---- sinalizador ----
+      { const sk = events.since('sinalizador', t); flare.visible = flareTrail.visible = sk > 0;
+        if (sk > 0) { const up = Math.min(sk, 3.5); flare.position.set(flarePos.x + up * 2, 6 + up * 22 - Math.max(0, sk - 3.5) * 1.2, flarePos.z);
+          const fa = flareTrail.geometry.attributes.position.array; for (let i = 0; i < FTR; i++) { const s2 = Math.max(0, up - i * 0.12); fa[i * 3] = flarePos.x + s2 * 2 + Math.sin(i) * 0.6; fa[i * 3 + 1] = 6 + s2 * 22; fa[i * 3 + 2] = flarePos.z; } flareTrail.geometry.attributes.position.needsUpdate = true; } }
       // ---- fogueira ----
       const fo = tFire(t) > 0 ? smooth(0, 1.2, tFire(t)) : 0;
       fireGroup.visible = tFire(t) > -1.5; // lenha aparece um pouco antes de acender
@@ -288,13 +335,32 @@ export async function build({ THREE, renderer, scene, camera, script, events, he
       bpMat.opacity = pk * (0.32 + 0.05 * Math.sin(t * 6));
 
       // ---- moradores / vagas-fantasma ----
-      for (const { c, p, ph } of people) {
-        const vis = (c.aparece == null ? 1 : smooth(c.aparece, c.aparece + 1.0, t)) * (c.some == null ? 1 : 1 - smooth(c.some, c.some + 0.8, t));
+      for (const { c, p, ph, path } of people) {
+        let vis = (c.aparece == null ? 1 : smooth(c.aparece, c.aparece + 1.0, t)) * (c.some == null ? 1 : 1 - smooth(c.some, c.some + 0.8, t));
+        let walking = 0, px = c.pos[0], pz = c.pos[1], yaw = (c.yaw ?? 0) * DEG;
+        if (path) {
+          if (t < c.chega) vis = 0;
+          else { const dist = (t - c.chega) * path.v;
+            if (dist < path.L) { for (const [a, b, L0, d] of path.segs) if (dist <= L0 + d) { const u = (dist - L0) / d; px = lerp(a[0], b[0], u); pz = lerp(a[1], b[1], u); yaw = Math.atan2(b[0] - a[0], b[1] - a[1]); break; } walking = path.v; } }
+        }
+        // vai e volta numa rota depois de chegar (ex.: ajudantes carregando toras)
+        if (c.rota && !walking && (!path || t >= c.chega + path.L / path.v)) {
+          const [a, b] = c.rota, L = Math.hypot(b[0] - a[0], b[1] - a[1]), sp = c.velRota ?? 1.2;
+          const k = ((t * sp / L) + (c.faseRota ?? 0)) % 2, f = k < 1 ? k : 2 - k;
+          px = lerp(a[0], b[0], f); pz = lerp(a[1], b[1], f); yaw = Math.atan2(k < 1 ? b[0] - a[0] : a[0] - b[0], k < 1 ? b[1] - a[1] : a[1] - b[1]); walking = -sp;
+        }
+        // à noite, quem tem posto noturno (ex.: caçadores na paliçada) vai até lá
+        if (c.noitePos) { const nt = events.since('noite', t) - (c.atrasoNoite ?? 0); if (nt > 0) { const D = Math.hypot(c.noitePos[0] - px, c.noitePos[1] - pz), u = Math.min(1, nt * 2.4 / Math.max(D, 0.01));
+          if (u < 1) { yaw = Math.atan2(c.noitePos[0] - px, c.noitePos[1] - pz); walking = 2.4; } px = lerp(px, c.noitePos[0], u); pz = lerp(pz, c.noitePos[1], u); } }
+        p.root.position.set(px, 0, pz); p.root.rotation.y = yaw;
         p.root.visible = vis > 0.01;
-        const qq = (c.vaga ? ANIM.fantasma : (ANIM[c.acao] || ANIM.parado))(t, ph);
+        const night = c._noite && events.since('noite', t) > (c.atrasoNoite ?? 0);
+        const animName = night ? c._noite : c._anim;
+        let qq = c.vaga ? ANIM.fantasma(t, ph) : walking > 0 ? ANIM.andar(t, ph, walking / 1.45) : walking < 0 ? (ANIM[animName] || ANIM.andar)(t, ph, -walking / 1.45) : (ANIM[animName] || ANIM.parado)(t, ph);
+        if (night && c.yawNoite != null) p.root.rotation.y = c.yawNoite * DEG;
         kit.setPose(p, qq);
         if (p.ghostMat) p.ghostMat.opacity = 0.62 * vis;
-        if (vis > 0.01) labels.push({ id: c.id, pos: [c.pos[0], 2.3, c.pos[1]], text: c.vaga ? 'VAGA LIVRE' : c.nome, sub: c.funcao, kind: c.vaga ? 'vaga' : '', near: 1, far: c.longe ?? 60, alpha: vis });
+        if (vis > 0.01 && (c.etiqueta == null || (t >= c.etiqueta[0] && t < c.etiqueta[1]))) labels.push({ id: c.id, pos: [px, 2.3, pz], text: c.vaga ? 'VAGA LIVRE' : c.nome, sub: c.funcao, kind: c.vaga ? 'vaga' : '', near: 1, far: c.longe ?? 60, alpha: vis });
       }
       // ---- zumbis: saem da mata e cercam a clareira ----
       for (const z of zombies) {

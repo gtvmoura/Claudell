@@ -197,6 +197,15 @@ function updateOverlay(t) {
     $('#counter .value').style.transform = `scale(${pulse})`;
     $('#counter .dot').style.opacity = Math.sin(t * Math.PI * 2) > 0 ? 1 : 0.25;
   }
+  // medidor (ex.: comida acabando)
+  if (s.medidor) {
+    const m = s.medidor, K = m.keys; let v = K[K.length - 1][1];
+    if (t <= K[0][0]) v = K[0][1]; else for (let i = 1; i < K.length; i++) if (t <= K[i][0]) { v = lerp(K[i - 1][1], K[i][1], (t - K[i - 1][0]) / (K[i][0] - K[i - 1][0])); break; }
+    let txt = ''; for (const [tt, tx] of m.textos || []) if (t >= tt) txt = tx;
+    const show = t >= (m.showAt ?? 0) && !choiceOn ? clamp((t - (m.showAt ?? 0)) / 0.4) : 0;
+    $('#meter').style.opacity = show; $('#meter .label').textContent = m.label;
+    $('#meter .bar i').style.width = (clamp(v) * 100).toFixed(1) + '%'; $('#meter .txt').textContent = txt;
+  }
   // legenda: palavras entram uma a uma (estilo shorts)
   const cap = s.captions.find(c => t >= c.start && t < c.end);
   const el = $('#caption');
@@ -302,7 +311,18 @@ function updateLabels(t, hideAll) {
     if (a * edge * capBand <= 0.01) continue;
     items.push({ L, x, y, dist, alpha: a * edge * capBand, sc: clamp(12 / Math.max(dist, 1), 0.72, 1.05) });
   }
-  items.sort((p, q) => q.dist - p.dist || (p.L.id < q.L.id ? -1 : 1)); // de longe para perto
+  // sem amontoar: os mais próximos têm prioridade; etiqueta que cobre outra já escolhida não aparece
+  items.sort((p, q) => p.dist - q.dist || (p.L.id < q.L.id ? -1 : 1));
+  const kept = [], rects = [];
+  for (const it of items) {
+    const w = (Math.max(it.L.text.length * 21, (it.L.sub || '').length * 15) + 46) * it.sc, h = (it.L.sub ? 104 : 66) * it.sc;
+    const r = [it.x - w / 2, it.y - h, it.x + w / 2, it.y];
+    if (rects.some(q => Math.max(0, Math.min(r[2], q[2]) - Math.max(r[0], q[0])) * Math.max(0, Math.min(r[3], q[3]) - Math.max(r[1], q[1])) > 0.12 * w * h)) continue;
+    rects.push(r); kept.push(it);
+    if (kept.length >= (script.maxEtiquetas ?? 12)) break;
+  }
+  items.length = 0; items.push(...kept);
+  items.sort((p, q) => q.dist - p.dist || (p.L.id < q.L.id ? -1 : 1)); // desenha de longe para perto
   for (const it of items) {
     g.setTransform(it.sc, 0, 0, it.sc, Math.round(it.x), Math.round(it.y));
     g.globalAlpha = it.alpha;
