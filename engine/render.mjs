@@ -11,6 +11,7 @@
 //   --stills a,b,c   também salva PNGs nestes tempos (s) em out/stills/
 //   --keep           não apaga a pasta de quadros
 //   --png            quadros em PNG sem perdas (mais lento; padrão: JPEG qualidade 95)
+//   --so-audio v.mp4 não renderiza imagem: refaz só o som (narração + efeitos) sobre o vídeo v.mp4
 import fs from 'node:fs';
 import path from 'node:path';
 import http from 'node:http';
@@ -18,6 +19,7 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 import { ensureSfx, SFX_DIR } from './sfx.mjs';
+import { narrar } from './tts.mjs';
 
 const require = createRequire(import.meta.url);
 const { chromium } = require('playwright');
@@ -40,6 +42,7 @@ const framesDir = path.join(ROOT, 'frames', path.basename(out, '.mp4'));
 const stills = (opt('stills', '') || '').split(',').filter(Boolean).map(Number);
 const N = Math.round(duration * FPS);
 const PNG = argv.includes('--png');
+const REMIX = opt('so-audio', null) && path.resolve(opt('so-audio'));
 
 function validate(s) {
   const err = m => { throw new Error('script.json inválido: ' + m); };
@@ -53,6 +56,10 @@ function validate(s) {
   for (const x of s.sounds || []) if (x.t == null || !x.sfx) err('cada som precisa de { t, sfx }');
 }
 
+fs.rmSync(framesDir, { recursive: true, force: true });
+fs.mkdirSync(framesDir, { recursive: true });
+fs.mkdirSync(path.dirname(out), { recursive: true });
+if (!REMIX) {
 // ---------- servidor estático local ----------
 const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.mjs': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.woff2': 'font/woff2', '.woff': 'font/woff', '.png': 'image/png', '.jpg': 'image/jpeg' };
 const server = http.createServer((req, res) => {
@@ -65,9 +72,6 @@ await new Promise(r => server.listen(0, '127.0.0.1', r));
 const url = `http://127.0.0.1:${server.address().port}/engine/index.html`;
 
 // ---------- quadros ----------
-fs.rmSync(framesDir, { recursive: true, force: true });
-fs.mkdirSync(framesDir, { recursive: true });
-fs.mkdirSync(path.dirname(out), { recursive: true });
 console.log(`▶ ${script.title.text}\n  ${N} quadros (${duration}s @ ${FPS}fps, a partir de ${start}s) com ${workers} página(s)`);
 
 // monta o quadro e só retorna depois que o navegador apresentou TODAS as camadas (WebGL + canvas 2D + DOM).
@@ -107,33 +111,51 @@ await Promise.all(Array.from({ length: workers }, (_, w) => worker(w)));
 await browser.close();
 server.close();
 console.log(`\n  quadros prontos em ${((Date.now() - t0) / 1000).toFixed(0)} s`);
+} // fim do !REMIX
 
-// ---------- som: cada efeito no seu tempo ----------
+// ---------- som: efeitos + narração (a música abaixa sob a voz) ----------
 const sounds = (script.sounds || []).filter(s => s.t < start + duration && s.t + (s.dur ?? 999) > start);
 ensureSfx([...new Set(sounds.map(s => s.sfx))]);
+const falas = narrar(script).filter(v => v.t < start + duration && v.t + v.dur > start);
 const mix = path.join(framesDir, 'mix.wav');
 const ff = (args) => { const r = spawnSync('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-y', ...args], { stdio: 'inherit' }); if (r.status !== 0) throw new Error('ffmpeg falhou'); };
-if (sounds.length) {
+{
   const inputs = [], filters = [];
+  const place = (rel, dur, fadeOut) => { // corte + atraso relativos ao trecho renderizado
+    const chain = [], skip = Math.max(0, -rel);
+    if (skip > 0 || dur != null) chain.push(`atrim=start=${skip.toFixed(3)}${dur != null ? `:end=${dur.toFixed(3)}` : ''}`, 'asetpts=PTS-STARTPTS');
+    if (fadeOut) chain.push(`afade=t=out:st=${Math.max(0, (dur ?? 10) - skip - fadeOut).toFixed(3)}:d=${fadeOut}`);
+    return { chain, delay: rel > 0 ? Math.round(rel * 1000) : 0 };
+  };
   sounds.forEach((s, i) => {
     inputs.push('-i', path.join(SFX_DIR, s.sfx + '.wav'));
-    const rel = s.t - start; // tempo relativo ao trecho renderizado
-    const chain = [];
-    const skip = Math.max(0, -rel);
-    if (skip > 0 || s.dur != null) chain.push(`atrim=start=${skip.toFixed(3)}${s.dur != null ? `:end=${(s.dur).toFixed(3)}` : ''}`, 'asetpts=PTS-STARTPTS');
-    if (s.fadeOut) chain.push(`afade=t=out:st=${Math.max(0, (s.dur ?? 10) - skip - s.fadeOut).toFixed(3)}:d=${s.fadeOut}`);
-    chain.push(`volume=${s.vol ?? 1}`);
-    if (rel > 0) { const ms = Math.round(rel * 1000); chain.push(`adelay=${ms}|${ms}`); }
+    const { chain, delay } = place(s.t - start, s.dur, s.fadeOut);
+    chain.push(`volume=${s.vol ?? 1}`); if (delay) chain.push(`adelay=${delay}|${delay}`);
     filters.push(`[${i}:a]${chain.join(',')}[s${i}]`);
   });
-  filters.push(`${sounds.map((_, i) => `[s${i}]`).join('')}amix=inputs=${sounds.length}:normalize=0:dropout_transition=0,alimiter=limit=0.9,atrim=end=${duration},apad=whole_dur=${duration}[mix]`);
+  falas.forEach((v, k) => {
+    const i = sounds.length + k;
+    inputs.push('-i', v.file);
+    const { chain, delay } = place(v.t - start, null, 0);
+    // voz: 48 kHz estéreo, sem graves embolados, comprimida e com leve "presença"
+    chain.push('aresample=48000', 'aformat=channel_layouts=stereo', 'highpass=f=90', 'acompressor=threshold=0.12:ratio=3:attack=5:release=90', 'equalizer=f=3000:t=q:w=1.2:g=3', `volume=${(v.vol * 2.6).toFixed(2)}`);
+    if (delay) chain.push(`adelay=${delay}|${delay}`);
+    filters.push(`[${i}:a]${chain.join(',')}[v${k}]`);
+  });
+  const end = `alimiter=limit=0.9,atrim=end=${duration},apad=whole_dur=${duration}[mix]`;
+  const bg = sounds.length ? `${sounds.map((_, i) => `[s${i}]`).join('')}amix=inputs=${sounds.length}:normalize=0:dropout_transition=0` : `anullsrc=r=48000:cl=stereo,atrim=end=${duration}`;
+  if (falas.length) {
+    filters.push(`${bg}[bg]`);
+    filters.push(`${falas.map((_, k) => `[v${k}]`).join('')}amix=inputs=${falas.length}:normalize=0:dropout_transition=0,asplit=2[vz][vk]`);
+    filters.push(`[bg][vk]sidechaincompress=threshold=0.012:ratio=12:attack=25:release=500:makeup=1[bgd]`); // ducking
+    filters.push(`[bgd][vz]amix=inputs=2:normalize=0:dropout_transition=0,${end}`);
+  } else filters.push(`${bg},${end}`);
   ff([...inputs, '-filter_complex', filters.join(';'), '-map', '[mix]', '-ar', '48000', '-ac', '2', mix]);
-} else {
-  ff(['-f', 'lavfi', '-i', `anullsrc=r=48000:cl=stereo`, '-t', String(duration), mix]);
 }
 
 // ---------- vídeo final ----------
-ff(['-framerate', String(FPS), '-i', path.join(framesDir, PNG ? 'f_%05d.png' : 'f_%05d.jpg'), '-i', mix,
+if (REMIX) ff(['-i', REMIX, '-i', mix, '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-shortest', '-movflags', '+faststart', out]);
+else ff(['-framerate', String(FPS), '-i', path.join(framesDir, PNG ? 'f_%05d.png' : 'f_%05d.jpg'), '-i', mix,
   '-c:v', 'libx264', '-preset', 'medium', '-crf', '18', '-pix_fmt', 'yuv420p', '-r', String(FPS),
   '-c:a', 'aac', '-b:a', '192k', '-shortest', '-movflags', '+faststart', out]);
 if (!argv.includes('--keep')) fs.rmSync(framesDir, { recursive: true, force: true });

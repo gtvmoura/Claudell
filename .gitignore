@@ -3,3 +3,5 @@ out/
 frames/
 assets/sfx/
 *.log
+assets/vozes/
+assets/tts/

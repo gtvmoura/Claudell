@@ -33,7 +33,8 @@
       },
       "ease": "out",
       "shake": 0.03
-    }
+    },
+    "fala": "E se o mundo acabasse… e cada seguidor virasse um morador?"
   },
   "camera": {
     "start": {
@@ -465,7 +466,8 @@
         "ease": "inOut",
         "shake": 0.04,
         "duration": 3.0
-      }
+      },
+      "fala": "Comenta seu nome e sua função pra entrar. E vota."
     }
   ],
   "choice": {
@@ -683,5 +685,23 @@
     "titulo": "E se o mundo acabasse e cada seguidor virasse um morador? (Parte 1)",
     "descricao": "Parte 1 🌲🧟 Achei uma clareira no meio da floresta e vou fundar uma comunidade. Cada seguidor vira um morador! Comenta seu NOME + FUNÇÃO e vota A ou B: como a gente se protege dos zumbis? #AComunidade #apocalipsezumbi #lowpoly #oquevocêfaria",
     "comentario_fixado": "🌲 PARTE 2 — comenta assim:\nNOME + FUNÇÃO + A ou B\nex.: \"Lucas, caçador, A\"\nA) Paliçada de troncos\nB) Torre de vigia + armadilhas\nOs comentários mais curtidos viram moradores!"
+  },
+  "narracao": {
+    "voz": "faber",
+    "velocidade": 1.0,
+    "vol": 1.0,
+    "atraso": 0.15,
+    "pronuncia": {
+      "Ano 1": "Ano um",
+      "Dia 1": "Dia um",
+      "@esefossevoceai": "É Se Fosse Você Aí"
+    },
+    "extras": [
+      {
+        "t": 62.4,
+        "ate": 68,
+        "fala": "Como a gente se protege dos zumbis? Comenta A ou B, com seu nome e sua função."
+      }
+    ]
   }
 }
