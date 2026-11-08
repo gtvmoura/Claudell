@@ -267,6 +267,7 @@ function updateOverlay(t) {
 
 // Etiquetas presas aos personagens: desenhadas num canvas 2D (determinístico, sem camadas do compositor)
 const _v = new THREE.Vector3();
+const _px = new Uint8Array(4);
 function rrect(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
 function drawTag(g, L) {
   const vaga = L.kind === 'vaga';
@@ -314,17 +315,23 @@ function updateLabels(t, hideAll) {
     const edge = Math.min(clamp((x - 170) / 90), clamp((W - 170 - x) / 90), clamp((y - 330) / 80)); // nunca cortada na borda
     const capBand = capOn ? Math.max(clamp((capTop - 60 - y) / 70), clamp((y - capTop - 330) / 60)) : 1; // não briga com a legenda
     if (a * edge * capBand <= 0.01) continue;
-    items.push({ L, x, y, dist, alpha: a * edge * capBand, sc: clamp(12 / Math.max(dist, 1), 0.72, 1.05) });
+    items.push({ L, ord: list.indexOf(L), x, y, dist, alpha: a * edge * capBand, sc: clamp(12 / Math.max(dist, 1), 0.72, 1.05) });
   }
-  // sem amontoar: os mais próximos têm prioridade; etiqueta que cobre outra já escolhida não aparece
-  items.sort((p, q) => p.dist - q.dist || (p.L.id < q.L.id ? -1 : 1));
-  const kept = [], rects = [];
+  // sem amontoar e SEM PULAR: prioridade fixa (ordem do roteiro), e quem fica atrás de outra etiqueta
+  // some aos poucos conforme a sobreposição (nada aparece/desaparece de um quadro para o outro)
+  items.sort((p, q) => p.ord - q.ord);
+  const kept = [];
   for (const it of items) {
     const w = (Math.max(it.L.text.length * 21, (it.L.sub || '').length * 15) + 46) * it.sc, h = (it.L.sub ? 104 : 66) * it.sc;
     const r = [it.x - w / 2, it.y - h, it.x + w / 2, it.y];
-    if (rects.some(q => Math.max(0, Math.min(r[2], q[2]) - Math.max(r[0], q[0])) * Math.max(0, Math.min(r[3], q[3]) - Math.max(r[1], q[1])) > 0.12 * w * h)) continue;
-    rects.push(r); kept.push(it);
-    if (kept.length >= (script.maxEtiquetas ?? 12)) break;
+    let cover = 0;
+    for (const k of kept) {
+      const q = k.r, ov = Math.max(0, Math.min(r[2], q[2]) - Math.max(r[0], q[0])) * Math.max(0, Math.min(r[3], q[3]) - Math.max(r[1], q[1])) / (w * h);
+      cover = Math.max(cover, ov * clamp(k.alpha * 1.5));
+    }
+    it.alpha *= 1 - clamp((cover - 0.04) / 0.14);
+    if (it.alpha <= 0.01) continue;
+    it.r = r; kept.push(it);
   }
   items.length = 0; items.push(...kept);
   items.sort((p, q) => q.dist - p.dist || (p.L.id < q.L.id ? -1 : 1)); // desenha de longe para perto
@@ -437,7 +444,7 @@ window.loadScript = async (s) => {
     for (const kind of ['', 'vaga']) for (const sc of [0.72, 1.05]) { g.setTransform(sc, 0, 0, sc, 540, 960); g.globalAlpha = 0.5; drawTag(g, { text: '@ÁÉÍÓÚÃÕÇ áéíóúãõç 0123456789', sub: 'Função · ÂÊÔ nº', kind }); }
     g.setTransform(1, 0, 0, 1, 0, 0); g.globalAlpha = 1; g.clearRect(0, 0, W, H);
   }
-  window.__three = { scene, renderer }; // depuração
+  window.__three = { scene, renderer, get composer() { return composer; }, get camera() { return camera; } }; // depuração
 
   const post = s.post_fx || {};
   const rt = new THREE.WebGLRenderTarget(W, H, { type: THREE.HalfFloatType, samples: post.msaa ?? 0 });
@@ -445,6 +452,27 @@ window.loadScript = async (s) => {
   composer.setPixelRatio(1);
   composer.setSize(W, H);
   composer.addPass(new RenderPass(scene, camera));
+  // limpa pixels inválidos (NaN/Inf que o SwiftShader às vezes gera na luz): sem isso o bloom
+  // espalha um único pixel ruim num bloco preto enorme (os "quadros piscando preto")
+  composer.addPass(new ShaderPass({
+    uniforms: { tDiffuse: { value: null }, uPx: { value: new THREE.Vector2(1 / W, 1 / H) } },
+    vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+    fragmentShader: `uniform sampler2D tDiffuse; uniform vec2 uPx; varying vec2 vUv;
+      bool ruim(vec4 c){ return any(isnan(c)) || any(isinf(c)) || !(abs(c.r) + abs(c.g) + abs(c.b) < 6.0e4); }
+      void main(){
+        vec4 c = texture2D(tDiffuse, vUv);
+        if (ruim(c)) {
+          vec4 soma = vec4(0.0); float n = 0.0;
+          for (int i = 0; i < 8; i++) {
+            vec2 o = vec2(i == 0 ? 1.0 : i == 1 ? -1.0 : i == 4 ? 2.0 : i == 5 ? -2.0 : 0.0, i == 2 ? 1.0 : i == 3 ? -1.0 : i == 6 ? 2.0 : i == 7 ? -2.0 : 0.0);
+            vec4 v = texture2D(tDiffuse, vUv + o * uPx);
+            if (!ruim(v)) { soma += v; n += 1.0; }
+          }
+          c = n > 0.0 ? soma / n : vec4(0.0, 0.0, 0.0, 1.0);
+        }
+        gl_FragColor = max(c, vec4(0.0));
+      }`,
+  }));
   if ((post.bloom ?? 0.55) > 0) composer.addPass(bloomPass = new UnrealBloomPass(new THREE.Vector2(W / 3, H / 3), post.bloom ?? 0.55, 0.6, post.bloomThreshold ?? 0.82));
   finalPass = new ShaderPass(FinalShader);
   labelTex = new THREE.CanvasTexture(labelCanvas); labelTex.colorSpace = THREE.NoColorSpace; labelTex.generateMipmaps = false; labelTex.minFilter = labelTex.magFilter = THREE.LinearFilter;
@@ -475,6 +503,8 @@ window.renderFrame = (t) => {
   const choiceOn = (script.choice && t >= script.choice.start) || (script.endcard && t >= script.endcard.start);
   updateLabels(t, choiceOn); labelTex.needsUpdate = true;
   composer.render();
+  // força a placa (SwiftShader) a terminar o desenho antes da captura: evita quadro com parte preta
+  { const gl = renderer.getContext(); gl.finish(); gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, _px); }
   updateOverlay(t);
   return true;
 };

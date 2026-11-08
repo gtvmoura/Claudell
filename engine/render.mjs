@@ -108,6 +108,34 @@ async function worker(w) {
   await page.close();
 }
 await Promise.all(Array.from({ length: workers }, (_, w) => worker(w)));
+
+// ---------- conferência: quadro com área preta repentina (captura antes de o WebGL terminar) é refeito ----------
+function quadrosRuins() {
+  const r = spawnSync('ffmpeg', ['-v', 'error', '-framerate', String(FPS), '-i', path.join(framesDir, PNG ? 'f_%05d.png' : 'f_%05d.jpg'),
+    '-vf', 'scale=54:96,format=gray', '-f', 'rawvideo', '-'], { maxBuffer: 1 << 30 });
+  const px = 54 * 96, n = Math.floor(r.stdout.length / px), preto = [];
+  for (let i = 0; i < n; i++) { let k = 0; for (let j = 0; j < px; j++) if (r.stdout[i * px + j] < 10) k++; preto.push(k / px); }
+  const ruins = [];
+  for (let i = 0; i < n; i++) {
+    const viz = [preto[i - 1], preto[i + 1]].filter(v => v != null);
+    if (viz.length && preto[i] - Math.max(...viz) > 0.06) ruins.push(i);
+  }
+  return ruins;
+}
+for (let rodada = 0; rodada < 4; rodada++) {
+  const ruins = quadrosRuins();
+  if (!ruins.length) break;
+  console.log(`\n  refazendo ${ruins.length} quadro(s) com área preta: ${ruins.slice(0, 12).join(', ')}${ruins.length > 12 ? '…' : ''}`);
+  const page = await browser.newPage({ viewport: { width: 1080, height: 1920 }, deviceScaleFactor: 1 });
+  await page.goto(url); await page.waitForFunction(() => window.__ready === true);
+  await page.evaluate(s => window.loadScript(s), script);
+  for (const i of ruins) {
+    await page.evaluate(renderAndPresent, start + i / FPS);
+    await page.evaluate(renderAndPresent, start + i / FPS); // segunda vez: tudo já aquecido
+    await page.screenshot(PNG ? { path: path.join(framesDir, `f_${String(i).padStart(5, '0')}.png`), type: 'png' } : { path: path.join(framesDir, `f_${String(i).padStart(5, '0')}.jpg`), type: 'jpeg', quality: 95 });
+  }
+  await page.close();
+}
 await browser.close();
 server.close();
 console.log(`\n  quadros prontos em ${((Date.now() - t0) / 1000).toFixed(0)} s`);
