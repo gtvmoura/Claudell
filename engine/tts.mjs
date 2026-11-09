@@ -2,7 +2,8 @@
 //
 // script.json:
 //   "narracao": {
-//     "voz": "faber",            // arquivo assets/vozes/pt_BR-<voz>-medium.onnx
+//     "motor": "kokoro",         // "kokoro" (assets/kokoro, vozes pm_alex/pm_santa/pf_dora) ou padrão Piper
+//     "voz": "pm_alex",          // Piper: arquivo assets/vozes/pt_BR-<voz>-medium.onnx
 //     "velocidade": 1.0,         // >1 fala mais rápido
 //     "vol": 1.0,
 //     "atraso": 0.15,            // segundos depois do início da legenda
@@ -41,8 +42,10 @@ function duracao(file) {
 export function narrar(script) {
   const cfg = script.narracao;
   if (!cfg) return [];
-  const model = path.join(VOZES, `pt_BR-${cfg.voz || 'faber'}-medium.onnx`);
-  if (!fs.existsSync(model)) throw new Error(`Voz não encontrada: ${model} (baixe em huggingface.co/rhasspy/piper-voices)`);
+  const kokoro = cfg.motor === 'kokoro';
+  const model = kokoro ? path.join(ROOT, 'assets', 'kokoro', 'model.onnx') : path.join(VOZES, `pt_BR-${cfg.voz || 'faber'}-medium.onnx`);
+  if (kokoro && !fs.existsSync(model)) throw new Error('Kokoro não encontrado: baixe onnx-community/Kokoro-82M-v1.0-ONNX (onnx/model.onnx e voices/<voz>.bin) em assets/kokoro');
+  if (!kokoro && !fs.existsSync(model)) throw new Error(`Voz não encontrada: ${model} (baixe em huggingface.co/rhasspy/piper-voices)`);
   fs.mkdirSync(TTS_DIR, { recursive: true });
   const out = [];
   const linhas = [];
@@ -53,11 +56,13 @@ export function narrar(script) {
     const text = textoFalado(cap, cfg);
     if (!text) continue;
     const vel = cap.velocidade ?? cfg.velocidade ?? 1;
-    const key = crypto.createHash('sha1').update(JSON.stringify([cfg.voz, vel, text])).digest('hex').slice(0, 16);
+    const key = crypto.createHash('sha1').update(JSON.stringify(kokoro ? ['kokoro', cfg.voz, vel, text] : [cfg.voz, vel, text])).digest('hex').slice(0, 16);
     const file = path.join(TTS_DIR, `${key}.wav`);
     if (!fs.existsSync(file)) {
-      const r = spawnSync('python3', ['-m', 'piper', '-m', model, '-f', file, '--length-scale', String(1 / vel), '--sentence-silence', String(cfg.pausa ?? 0.25)], { input: text, encoding: 'utf8' });
-      if (r.status !== 0 || !fs.existsSync(file)) throw new Error('Piper falhou: ' + (r.stderr || '').slice(-400));
+      const r = kokoro
+        ? spawnSync('python3', [path.join(ROOT, 'engine', 'kokoro_tts.py'), cfg.voz || 'pm_alex', String(vel), file], { input: text, encoding: 'utf8' })
+        : spawnSync('python3', ['-m', 'piper', '-m', model, '-f', file, '--length-scale', String(1 / vel), '--sentence-silence', String(cfg.pausa ?? 0.25)], { input: text, encoding: 'utf8' });
+      if (r.status !== 0 || !fs.existsSync(file)) throw new Error((kokoro ? 'Kokoro' : 'Piper') + ' falhou: ' + (r.stderr || '').slice(-400));
       console.log(`  voz -> ${text}`);
     }
     const dur = duracao(file);

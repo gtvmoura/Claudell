@@ -2250,8 +2250,8 @@
     }
   ],
   "narracao": {
-    "voz": "cadu",
-    "velocidade": 1.05,
+    "voz": "pm_alex",
+    "velocidade": 1.0,
     "vol": 1.0,
     "atraso": 0.15,
     "efeito": "natural",
@@ -2265,7 +2265,8 @@
         "fala": "Caçar à noite, ou plantar e racionar? Comenta A ou B."
       }
     ],
-    "pausa": 0.2
+    "pausa": 0.2,
+    "motor": "kokoro"
   },
   "sounds": [
     {
