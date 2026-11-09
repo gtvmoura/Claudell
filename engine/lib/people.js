@@ -57,6 +57,7 @@ export function makePeopleKit(THREE) {
     rifle(h) { const g = new THREE.Group(); add(g, box(0.06, 0.1, 0.32), '#4a3322', 0, -0.06, -0.12); add(g, box(0.05, 0.07, 0.42), '#2a2d30', 0, -0.03, 0.22); add(g, cyl(0.016, 0.016, 0.42, 6), '#1c1e20', 0, -0.0, 0.62, { rot: [Math.PI / 2, 0, 0] }); add(g, box(0.03, 0.12, 0.04), '#1c1e20', 0, -0.11, 0.12); h.add(g); return g; },
     maleta(h) { const g = new THREE.Group(); add(g, box(0.32, 0.22, 0.12), '#f2f2f2', 0, -0.14, 0); add(g, box(0.06, 0.16, 0.13), '#d0281f', 0, -0.14, 0); add(g, box(0.16, 0.06, 0.13), '#d0281f', 0, -0.14, 0); h.add(g); return g; },
     tora(h) { const g = new THREE.Group(); add(g, cyl(0.12, 0.13, 1.9, 7), '#7a5233', 0.05, 0.25, 0.1, { rot: [0, 0, Math.PI / 2] }); h.add(g); return g; },
+    vara(h) { const g = new THREE.Group(); const a = -0.75; add(g, cyl(0.016, 0.03, 2.4, 5), '#c49a5c', 0, Math.sin(a) * 1.2 - 0.05, Math.cos(a) * 1.2, { rot: [Math.PI / 2 - a, 0, 0] }); add(g, cyl(0.004, 0.004, 1.4, 3), '#f4f4f4', 0, Math.sin(a) * 2.4 - 0.75, Math.cos(a) * 2.4, {}); add(g, cyl(0.035, 0.035, 0.06, 8), '#2b2b2b', 0.05, -0.06, 0.15, { rot: [0, 0, Math.PI / 2] }); h.add(g); return g; },
     // ---- mão esquerda ----
     arco(h) { const g = new THREE.Group(); for (const sg of [1, -1]) add(g, cyl(0.014, 0.018, 0.62, 5), '#6b4a2e', 0, -0.05 + sg * 0.3, 0.06 + 0.07, { rot: [-sg * 0.32, 0, 0] }); add(g, cyl(0.004, 0.004, 1.1, 3), '#e8e1d6', 0, -0.05, 0.02); h.add(g); return g; },
     escudo(h) { const g = new THREE.Group(); add(g, cyl(0.3, 0.3, 0.05, 10), '#6b4a2e', -0.06, -0.08, 0.04, { rot: [0, 0, Math.PI / 2] }); add(g, cyl(0.08, 0.08, 0.07, 8), '#8f969c', -0.09, -0.08, 0.04, { rot: [0, 0, Math.PI / 2] }); h.add(g); return g; },
@@ -98,6 +99,7 @@ export function makePeopleKit(THREE) {
     if (s.backpack) { add(spine, box(0.3, 0.38, 0.14), s.backpack, 0, 0.25, -0.17, C()); }
     if (s.colete) { add(spine, cyl(0.218 * bw, 0.18 * bw, 0.4, 6, 0.27), s.colete, 0, 0, 0, { ...C(), scale: [1.12, 1, 0.66] }); for (const x of [-0.09, 0.09]) add(spine, box(0.08, 0.1, 0.04), s.colete, x, 0.18, 0.13 * bw, C()); }
     if (s.aljava) { const q = add(spine, cyl(0.07, 0.06, 0.55, 7), '#6b4a2e', 0.08, 0.3, -0.17, { ...C(), rot: [0.25, 0, -0.35] }); for (let i = 0; i < 4; i++) add(q, cyl(0.006, 0.006, 0.18, 3), '#e8e1d6', (i - 1.5) * 0.025, 0.33, 0); }
+    if (s.armasCostas) { add(spine, box(0.32, 0.42, 0.16), '#3b4a2a', 0, 0.24, -0.18, C()); for (const [x, r] of [[-0.06, 0.45], [0.06, -0.45]]) { add(spine, box(0.05, 0.85, 0.06), '#2a2d30', x, 0.32, -0.28, { ...C(), rot: [0, 0, r] }); add(spine, box(0.06, 0.18, 0.07), '#4a3322', x - Math.sin(r) * 0.36, 0.32 - Math.cos(r) * 0.36, -0.28, { ...C(), rot: [0, 0, r] }); } add(hips, box(0.09, 0.16, 0.06), '#1c1e20', -0.2 * bw, -0.06, 0.02, C()); }
     if (s.cinto) { add(hips, box(0.38 * bw, 0.07, 0.24 * bw), '#5a3a22', 0, 0.05, 0, C()); add(hips, box(0.09, 0.1, 0.06), '#7a5233', 0.13, -0.02, 0.1, C()); }
     if (s.scarf) add(spine, cyl(0.1, 0.12, 0.08, 8, 0), s.scarf, 0, 0.5, 0, C());
     // cabeça
@@ -112,6 +114,7 @@ export function makePeopleKit(THREE) {
       add(head, box(0.022, 0.035, 0.03), s.skin, 0, 0.1, 0.11, { shadow: false });
       add(head, box(0.045, 0.01, 0.01), '#6b2e2e', 0, 0.065, 0.105, { shadow: false });
       if (s.glasses) { for (const x of [-0.042, 0.042]) add(head, box(0.045, 0.035, 0.008), '#111', x, 0.125, 0.112, { shadow: false }); add(head, box(0.03, 0.008, 0.008), '#111', 0, 0.13, 0.113, { shadow: false }); }
+      if (s.cicatriz) { add(head, box(0.012, 0.075, 0.01), '#7a2a22', 0.045, 0.125, 0.112, { shadow: false, rot: [0, 0, 0.35] }); }
       if (s.beard) add(head, box(0.17, 0.08, 0.07), s.hairColor, 0, 0.045, 0.06);
       const hc = s.hairColor;
       const cap = () => add(head, ico(0.123, 1), hc, 0, 0.145, -0.012, { scale: [1, 0.66, 1.06] });
@@ -239,6 +242,7 @@ export const ANIM = {
   carregarTora: (t, ph, f = 0.85) => ({ ...ANIM.andar(t, ph, f), shRx: -2.6, shRz: -0.1, elR: -1.9, shLx: -0.35, spineX: 0.1, spineZ: 0.08 }),
   olhar: (t, ph) => ({ ...ANIM.parado(t, ph), headY: 0.9 * Math.sin(t * 0.9), spineY: 0.25 * Math.sin(t * 0.9), headX: -0.1, shLz: 0.25, shRz: -0.25, elL: -1.6, elR: -1.6, shLx: -0.3, shRx: -0.3 }),
   assustado: (t, ph) => ({ spineX: -0.15, shLx: -1.2, shRx: -1.2, shLz: -0.3, shRz: 0.3, elL: -1.2, elR: -1.2, hipL: -0.35, knL: 0.4, hipR: 0.25, headX: -0.15 + 0.04 * Math.sin(t * 9), headY: 0.35 * Math.sin(t * 1.3) }),
+  pescar: (t, ph) => ({ ...ANIM.parado(t, ph), shRx: -0.75 + 0.06 * Math.sin(t * 1.3 + ph), elR: -0.35, shRz: 0.05, shLx: -0.6, elL: -1.1, shLz: -0.25, headX: 0.15 }),
   apontar: (t, ph) => ({ ...ANIM.parado(t, ph), shRx: -1.5, shRz: -0.1, elR: -0.05, headY: -0.15 }),
   zumbi(t, ph, f = 0.55) { const p = t * f * PI2 + ph; const jerk = Math.pow(Math.max(0, Math.sin(t * 1.3 + ph * 3)), 12) * 0.8;
     return { hipL: -0.35 * S(p), hipR: 0.18 * S(p), knL: 0.5 * Math.max(0, S(p + 1.3)), knR: 0.25 * Math.max(0, S(p + 1.3 + Math.PI)), spineX: 0.3, spineZ: 0.15 * S(p * 0.5),
@@ -261,12 +265,17 @@ export const PAPEIS = {
   medico:      { rotulo: 'Médico',      v: { coat: true, tool: 'maleta' }, anim: 'parado', noite: 'parado' },
   ajudante:    { rotulo: 'Ajudante',    v: { hat: 'bone', tool: 'tora' }, anim: 'carregarTora', noite: 'parado' },
   criador:     { rotulo: 'Criador',     v: { hat: 'chapeu', tool: 'milho' }, anim: 'alimentar', noite: 'parado' },
+  pescador:    { rotulo: 'Pescador',    v: { hat: 'chapeu', top: 'manga_longa', topColor: '#2e6f8e', tool: 'vara' }, anim: 'pescar', noite: 'parado' },
+  ferreiro:    { rotulo: 'Ferreiro',    v: { top: 'regata', topColor: '#3a3a3a', apron: '#5a3a22', tool: 'martelo' }, anim: 'martelar', noite: 'parado' },
+  engenheiro:  { rotulo: 'Engenheiro',  v: { hat: 'capacete', colete: '#f1c40f', tool: 'prancheta' }, anim: 'prancheta', noite: 'parado' },
+  comandante:  { rotulo: 'Comandante',  v: { hat: 'bandana', hatColor: '#7b1f1f', colete: '#2c3e50', topColor: '#7b1f1f', tool: 'espada', toolL: 'escudo' }, anim: 'apontar', noite: 'guarda' },
   morador:     { rotulo: 'Morador',     v: {}, anim: 'parado', noite: 'sentado' },
 };
 // traduz o que a pessoa escreveu ("quero ser o matador de zumbis") para um papel
 export function funcaoParaPapel(txt = '') {
   const t = txt.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
   const regras = [
+    [/pesca/, 'pescador'], [/ferreir|ferrament/, 'ferreiro'], [/engenh/, 'engenheiro'], [/comand|lider/, 'comandante'], [/samurai/, 'espadachim'], [/defens/, 'guardiao'],
     [/arque/, 'arqueiro'], [/caca|caçad/, 'cacador'], [/lenha/, 'lenhador'], [/constru|contru/, 'construtor'],
     [/espad/, 'espadachim'], [/luta|atacant/, 'lutador'], [/atirad|militar|armeir|soldad|selva/, 'militar'],
     [/guard|protet|proteg|matador|mata de zumbi|guardi/, 'guardiao'], [/cozin|chef|comida/, 'cozinheiro'],
