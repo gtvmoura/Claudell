@@ -241,7 +241,7 @@ export async function build({ THREE, renderer, scene, camera, script, events, he
     const p = kit.makePerson(vis); p.root.position.set(c.pos[0], 0, c.pos[1]); p.root.rotation.y = (c.yaw ?? 0) * DEG; scene.add(p.root);
     // chegada: anda de c.de (na trilha) até a entrada da clareira e depois até c.pos
     let path = null;
-    if (c.chega != null) { const pts = [c.de || [0, 30], [0.3, 15.5], c.pos]; const segs = []; let L = 0; for (let k = 1; k < pts.length; k++) { const d = Math.hypot(pts[k][0] - pts[k - 1][0], pts[k][1] - pts[k - 1][1]); segs.push([pts[k - 1], pts[k], L, d]); L += d; } path = { segs, L, v: c.vel ?? 2.2 }; }
+    if (c.chega != null) { const pts = [c.de || [0, 30], [0.3, 15.5], ...(c.via || []), c.pos]; const segs = []; let L = 0; for (let k = 1; k < pts.length; k++) { const d = Math.hypot(pts[k][0] - pts[k - 1][0], pts[k][1] - pts[k - 1][1]); segs.push([pts[k - 1], pts[k], L, d]); L += d; } path = { segs, L, v: c.vel ?? 2.2 }; }
     people.push({ c, p, ph: R() * 6.28, path });
   }
   // zumbis saindo da mata
